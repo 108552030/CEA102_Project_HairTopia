@@ -37,7 +37,7 @@ public class MemServlet extends HttpServlet {
 	    	  HttpSession session = req.getSession();
 	          session.setAttribute("account", account);
 	    	  
-	    	  	String url = "/mem/login_success.jsp";
+	    	  	String url = "/frontEnd/member/login_success.jsp";
 				RequestDispatcher successView = req.getRequestDispatcher(url); // 新增成功後轉交listAllEmp.jsp
 				successView.forward(req, res);	
 	      }

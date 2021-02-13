@@ -33,7 +33,15 @@
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>MemServlet</servlet-name>
-		<url-pattern>/mem/MemServlet</url-pattern>
+		<url-pattern>/frontEnd/member/MemServlet</url-pattern>
+	</servlet-mapping>
+		<servlet>
+		<servlet-name>NewsServlet</servlet-name>
+		<servlet-class>com.news.controller.NewsServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>NewsServlet</servlet-name>
+		<url-pattern>/frontEnd/news/NewsServlet</url-pattern>
 	</servlet-mapping>
   
   

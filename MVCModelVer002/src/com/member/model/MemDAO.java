@@ -25,17 +25,14 @@ public class MemDAO implements MemDAO_interface{
 		}
 	}
 	
-	
-	private static final String INSERT_STMT = "INSERT INTO MEMBER (mem_name, mem_email, mem_pswd) VALUES (?, ?, ?)";
-	private static final String GET_ALL_STMT = "SELECT mem_name, mem_email, mem_pswd FROM MEMBER";
-	private static final String GET_ONE_STMT = "SELECT mem_name, mem_email, mem_pswd FROM MEMBER where mem_no = ?";
-	private static final String GET_staff_ByStaffno_STMT = "SELECT empno,ename,job,hiredate,sal,comm,deptno FROM emp2 where deptno = ? order by empno";
+	//memNo,memName,memGender,memPic,memInform,memEmail,memPswd,memPhone,memAddr,memBal,memStatus,memEndDate, memCode
+	private static final String INSERT_STMT = "INSERT INTO MEMBER (memName, memEmail, memPswd) VALUES (?, ?, ?)";
+	private static final String GET_ALL_STMT = "SELECT * FROM MEMBER";
+	private static final String GET_ONE_STMT = "SELECT memNO, memName, memEmail, memPswd FROM MEMBER WHERE memNO = ?";
+	private static final String VALIDATE_STMT = "SELECT * FROM MEMBER WHERE memEmail=? AND memPswd=?";
+	private static final String DELETE = "DELETE FROM MEMBER WHERE memNO = ?";
+	private static final String UPDATE = "UPDATE MEMBER set memName=?, memEmail=?, memPswd= ? WHERE memNO = ?";
 
-	private static final String VALIDATE_STMT = "SELECT * FROM MEMBER WHERE mem_email=? AND mem_pswd=?";
-//	private static final String DELETE_EMPs = "DELETE FROM emp2 where deptno = ?";
-	private static final String DELETE = "DELETE FROM MEMBER where mem_no = ?";
-
-	private static final String UPDATE = "UPDATE MEMBER set mem_name=?, mem_email=?, mem_pswd= ? where mem_no = ?";
 
 	@Override
 	public void insert(MemVO memVO) {
@@ -164,9 +161,10 @@ public class MemDAO implements MemDAO_interface{
 			while (rs.next()) {
 				// deptVO 也稱為 Domain objects
 				memVO = new MemVO();
-				memVO.setMemName(rs.getString("mem_name"));
-				memVO.setMemEmail(rs.getString("mem_email"));
-				memVO.setMemPswd(rs.getString("mem_pswd"));
+				memVO.setMemNo(memNo);
+				memVO.setMemName(rs.getString("memName"));
+				memVO.setMemEmail(rs.getString("memEmail"));
+				memVO.setMemPswd(rs.getString("memPswd"));
 			}
 
 			// Handle any driver errors
@@ -216,9 +214,9 @@ public class MemDAO implements MemDAO_interface{
 			while (rs.next()) {
 				// deptVO 也稱為 Domain objects
 				memVO = new MemVO();
-				memVO.setMemName(rs.getString("mem_name"));
-				memVO.setMemEmail(rs.getString("mem_email"));
-				memVO.setMemPswd(rs.getString("mem_pswd"));
+				memVO.setMemName(rs.getString("memName"));
+				memVO.setMemEmail(rs.getString("memEmail"));
+				memVO.setMemPswd(rs.getString("memPswd"));
 				list.add(memVO);
 			}
 

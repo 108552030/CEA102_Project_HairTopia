@@ -1,4 +1,4 @@
-package com.member.model;
+package com.news.model;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -12,41 +12,38 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
-public class MemJNDIDAO implements MemDAO_interface{
+public class NewsDAO implements NewsDAO_interface{
 
 	private static DataSource ds = null;
 	
 	static {
 		try {
 			Context ctx = new InitialContext();
-			ds = (DataSource) ctx.lookup("java:comp/env/jdbc/Test");
+			ds = (DataSource) ctx.lookup("java:comp/env/jdbc/David");
 		} catch (NamingException e) {
 			e.printStackTrace();
 		}
 	}
 	
-	
-	private static final String INSERT_STMT = "INSERT INTO MEMBER (mem_name, mem_email, mem_pswd) VALUES (?, ?, ?)";
-	private static final String GET_ALL_STMT = "SELECT mem_name, mem_email, mem_pswd FROM MEMBER";
-	private static final String GET_ONE_STMT = "SELECT mem_name, mem_email, mem_pswd FROM MEMBER where mem_no = ?";
-	private static final String GET_staff_ByStaffno_STMT = "SELECT empno,ename,job,hiredate,sal,comm,deptno FROM emp2 where deptno = ? order by empno";
-	private static final String VALIDATE_STMT = "SELECT * FROM MEMBER WHERE mem_email=? AND mem_pasw=?";
-//	private static final String DELETE_EMPs = "DELETE FROM emp2 where deptno = ?";
-	private static final String DELETE = "DELETE FROM MEMBER where mem_no = ?";
+	//memNo,memName,memGender,memPic,memInform,memEmail,memPswd,memPhone,memAddr,memBal,memStatus,memEndDate, memCode
+	private static final String INSERT_STMT = "INSERT INTO NEWS (newsTitle, newsCon) VALUES ( ?, ?)";
+	private static final String GET_ALL_STMT = "SELECT * FROM NEWS";
+	private static final String GET_ONE_STMT = "SELECT * FROM NEWS WHERE newsNo = ?";
+//	private static final String VALIDATE_STMT = "SELECT * FROM MEMBER WHERE memEmail=? AND memPswd=?";
+	private static final String DELETE = "DELETE FROM NEWS WHERE newsNo = ?";
+	private static final String UPDATE = "UPDATE NEWS SET newsTitle=?, newsCon=? WHERE newsNo = ?";
 
-	private static final String UPDATE = "UPDATE MEMBER set mem_name=?, mem_email=?, mem_pswd= ? where mem_no = ?";
 
 	@Override
-	public void insert(MemVO memVO) {
+	public void insert(NewsVO newsVO) {
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		try {
 			con = ds.getConnection();
 			pstmt = con.prepareStatement(INSERT_STMT);
 			
-			pstmt.setString(1, memVO.getMemName());
-			pstmt.setString(2, memVO.getMemEmail());
-			pstmt.setString(3, memVO.getMemPswd());
+			pstmt.setString(1, newsVO.getNewsTitle());
+			pstmt.setString(2, newsVO.getNewsCon());
 
 			pstmt.executeUpdate();
 
@@ -71,7 +68,7 @@ public class MemJNDIDAO implements MemDAO_interface{
 	}
 
 	@Override
-	public void update(MemVO memVO) {
+	public void update(NewsVO newsVO) {
 		// TODO Auto-generated method stub
 		Connection con = null;
 		PreparedStatement pstmt = null;
@@ -79,10 +76,9 @@ public class MemJNDIDAO implements MemDAO_interface{
 			con = ds.getConnection();
 			pstmt = con.prepareStatement(UPDATE);
 			
-			pstmt.setString(1, memVO.getMemName());
-			pstmt.setString(2, memVO.getMemEmail());
-			pstmt.setString(3, memVO.getMemPswd());
-			pstmt.setInt(4, memVO.getMemNo());
+			pstmt.setString(1, newsVO.getNewsTitle());
+			pstmt.setString(2, newsVO.getNewsCon());
+			pstmt.setInt(3, newsVO.getNewsNo());
 
 			int a = pstmt.executeUpdate();
 			System.out.println(a);
@@ -109,7 +105,7 @@ public class MemJNDIDAO implements MemDAO_interface{
 	}
 
 	@Override
-	public void delete(Integer memNo) {
+	public void delete(Integer newsNo) {
 		// TODO Auto-generated method stub
 		Connection con = null;
 		PreparedStatement pstmt = null;
@@ -118,7 +114,7 @@ public class MemJNDIDAO implements MemDAO_interface{
 			con = ds.getConnection();
 			pstmt = con.prepareStatement(DELETE);
 
-			pstmt.setInt(1, memNo);
+			pstmt.setInt(1, newsNo);
 			
 			pstmt.executeUpdate();
 
@@ -146,8 +142,8 @@ public class MemJNDIDAO implements MemDAO_interface{
 	}
 
 	@Override
-	public MemVO findByPrimaryKey(Integer memNo) {
-		MemVO memVO = null;
+	public NewsVO findByPrimaryKey(Integer newsNo) {
+		NewsVO newsVO = null;
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
@@ -156,16 +152,17 @@ public class MemJNDIDAO implements MemDAO_interface{
 			con = ds.getConnection();
 			pstmt = con.prepareStatement(GET_ONE_STMT);
 
-			pstmt.setInt(1, memNo);
+			pstmt.setInt(1, newsNo);
 
 			rs = pstmt.executeQuery();
 
 			while (rs.next()) {
 				// deptVO 也稱為 Domain objects
-				memVO = new MemVO();
-				memVO.setMemName(rs.getString("mem_name"));
-				memVO.setMemEmail(rs.getString("mem_email"));
-				memVO.setMemPswd(rs.getString("mem_pswd"));
+				newsVO = new NewsVO();
+				newsVO.setNewsNo(rs.getInt("newsNo"));
+				newsVO.setNewsTitle(rs.getString("newsTitle"));
+				newsVO.setNewsCon(rs.getString("newsCon"));
+				newsVO.setNewsTime(rs.getDate("newsTime"));
 			}
 
 			// Handle any driver errors
@@ -195,13 +192,13 @@ public class MemJNDIDAO implements MemDAO_interface{
 				}
 			}
 		}
-		return memVO;
+		return newsVO;
 	}
 
 	@Override
-	public List<MemVO> getAll() {
-		List<MemVO> list = new ArrayList<MemVO>();
-		MemVO memVO = null;
+	public List<NewsVO> getAll() {
+		List<NewsVO> list = new ArrayList<NewsVO>();
+		NewsVO newsVO = null;
 		
 		Connection con = null;
 		PreparedStatement pstmt = null;
@@ -214,11 +211,14 @@ public class MemJNDIDAO implements MemDAO_interface{
 
 			while (rs.next()) {
 				// deptVO 也稱為 Domain objects
-				memVO = new MemVO();
-				memVO.setMemName(rs.getString("mem_name"));
-				memVO.setMemEmail(rs.getString("mem_email"));
-				memVO.setMemPswd(rs.getString("mem_pswd"));
-				list.add(memVO);
+				newsVO = new NewsVO();
+				
+				newsVO.setNewsNo(rs.getInt("newsNo"));
+				newsVO.setNewsTitle(rs.getString("newsTitle"));
+				newsVO.setNewsCon(rs.getString("newsCon"));
+				newsVO.setNewsTime(rs.getDate("newsTime"));
+				
+				list.add(newsVO);
 			}
 
 			// Handle any driver errors
@@ -250,53 +250,7 @@ public class MemJNDIDAO implements MemDAO_interface{
 		}	
 		return list;
 	}
+	
 
-	public boolean validate(MemVO memVO) {
-		boolean status=false;
-		
-		Connection con = null;
-		PreparedStatement pstmt = null;
-		ResultSet rs = null;
-
-		try {
-			con = ds.getConnection();
-			pstmt = con.prepareStatement(VALIDATE_STMT);
-			
-			pstmt.setString(1, memVO.getMemEmail());
-			pstmt.setString(2, memVO.getMemPswd());
-
-			rs = pstmt.executeQuery();
-			
-			status=rs.next();
-			
-			// Handle any driver errors
-		} catch (SQLException se) {
-			throw new RuntimeException("A database error occured. " + se.getMessage());
-			// Clean up JDBC resources
-		} finally {
-			if (rs != null) {
-				try {
-					rs.close();
-				} catch (SQLException se) {
-					se.printStackTrace(System.err);
-				}
-			}
-			if (pstmt != null) {
-				try {
-					pstmt.close();
-				} catch (SQLException se) {
-					se.printStackTrace(System.err);
-				}
-			}
-			if (con != null) {
-				try {
-					con.close();
-				} catch (Exception e) {
-					e.printStackTrace(System.err);
-				}
-			}
-		}
-		return false;
-	}
 
 }

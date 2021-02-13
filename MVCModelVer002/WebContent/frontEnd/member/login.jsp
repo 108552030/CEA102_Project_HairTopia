@@ -11,12 +11,12 @@
     <title>Login</title>
     <style type="text/css">
         body, html {
-            height: 99%;
+            height: 100%;
             background-repeat: no-repeat;
             /*background-image: linear-gradient(rgb(255, 255, 255), rgb(12, 97, 33));*/
             /*透明圖層*/
             /*background-color: rgba(0, 0, 0, 0.5);*/
-            background-color: #000;
+            background-color: #FFF;
         }
 
         .card-container.card {
@@ -54,7 +54,7 @@
         .profile-img-card {
             width: 50%;
             height: 50%px;
-            margin: 0 auto 10px;
+            margin: 0 auto 30px;
             display: block;
             -moz-border-radius: 50%;
             -webkit-border-radius: 50%;
@@ -183,17 +183,19 @@
     <div class="container">
         <div class="card card-container">
             <!-- <img class="profile-img-card" src="//lh3.googleusercontent.com/-6V8xOA6M7BA/AAAAAAAAAAI/AAAAAAAAAAA/rzlHcD0KYwo/photo.jpg?sz=120" alt="" /> -->
+           	
             <img id="profile-img" class="profile-img-card" src="HairtopiaLogo/HairtopiaLogo1.png" />
-            <p id="profile-name" class="profile-name-card"></p>
+            <h2 align="center">登入</h2>
+<!--             <p id="profile-name" class="profile-name-card"></p> -->
             <form method="post" class="form-signin" action="MemServlet">
                 <span id="reauth-email" class="reauth-email"></span>
-                <input type="email" id="inputEmail" class="form-control" placeholder="電子郵件地址" required autofocus name="account">
-                <input type="password" id="inputPassword" class="form-control" placeholder="密碼" required name="password">
-                <div id="remember" class="checkbox">
-                    <label>
-                        <input type="checkbox" value="remember-me"> 記住我
-                    </label>
-                </div>
+                <input type="email" id="inputEmail" class="form-control" placeholder="電子郵件地址" required autofocus autocomplete="off" name="account">
+                <input type="password" id="inputPassword" class="form-control" placeholder="密碼" required autocomplete="off" name="password">
+<!--                 <div id="remember" class="checkbox"> -->
+<!--                     <label> -->
+<!--                         <input type="checkbox" value="remember-me"> 記住我 -->
+<!--                     </label> -->
+<!--                 </div> -->
                 <!-- for sign in -->
                 <button class="btn btn-lg btn-primary btn-block btn-signin" type="submit">登入</button>
                 <!-- for sign up -->
@@ -203,8 +205,8 @@
                         <span class="span-or">or</span>
                     </div>
                 </div>
-                <button class="btn btn-lg btn-primary btn-block btn-signin" type="submit">註冊</button>
             </form><!-- /form -->
+            <button onclick="location.href='NewFile.jsp'" class="btn btn-lg btn-primary btn-block btn-signin">註冊</button>
             <a href="#" class="forgot-password">
                 忘記密碼?
             </a>
