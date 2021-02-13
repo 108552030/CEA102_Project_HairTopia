@@ -1,39 +1,36 @@
-package com.news.model;
+package com.rule.model;
 
-import java.sql.DriverManager;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+
 import java.sql.*;
 
-public class NewsJDBCDAO implements NewsDAO_interface {
+public class RuleJDBCDAO implements RuleDAO_interface {
+
 	String driver = "com.mysql.cj.jdbc.Driver";
 	String url = "jdbc:mysql://localhost:3306/hairtopia?serverTimezone=Asia/Taipei";
 	String userid = "David";
 	String passwd = "123456";
 
-	// memNo,memName,memGender,memPic,memInform,memEmail,memPswd,memPhone,memAddr,memBal,memStatus,memEndDate,
-	// memCode
-
-	private static final String INSERT_STMT = "INSERT INTO NEWS (newsTitle, newsCon) VALUES ( ?, ?)";
-	private static final String GET_ALL_STMT = "SELECT * FROM NEWS";
-	private static final String GET_ONE_STMT = "SELECT * FROM NEWS WHERE newsNo = ?";
-//	private static final String VALIDATE_STMT = "SELECT * FROM MEMBER WHERE memEmail=? AND memPswd=?";
-	private static final String DELETE = "DELETE FROM NEWS WHERE newsNo = ?";
-	private static final String UPDATE = "UPDATE NEWS SET newsTitle=?, newsCon=? WHERE newsNo = ?";
+	private static final String INSERT_STMT = "INSERT INTO RULE (ruleName, ruleCon) VALUES ( ?, ?)";
+	private static final String GET_ALL_STMT = "SELECT * FROM RULE";
+	private static final String GET_ONE_STMT = "SELECT * FROM RULE WHERE ruleNo = ?";
+	private static final String DELETE = "DELETE FROM RULE WHERE ruleNo = ?";
+	private static final String UPDATE = "UPDATE RULE SET ruleName=?, ruleCon=? WHERE ruleNo = ?";
 
 	@Override
-	public void insert(NewsVO newsVO) {
+	public void insert(RuleVO ruleVO) {
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		try {
 			Class.forName(driver);
 			con = DriverManager.getConnection(url, userid, passwd);
 			pstmt = con.prepareStatement(INSERT_STMT);
-			pstmt.setString(1, newsVO.getNewsTitle());
-			pstmt.setString(2, newsVO.getNewsCon());
-//			pstmt.setString(12, memVO.getMemCode());
+
+			pstmt.setString(1, ruleVO.getRuleName());
+			pstmt.setString(2, ruleVO.getRuleCon());
 
 			pstmt.executeUpdate();
-
 		} catch (ClassNotFoundException e) {
 			throw new RuntimeException("Couldn't load database driver. " + e.getMessage());
 		} catch (SQLException se) {
@@ -46,6 +43,7 @@ public class NewsJDBCDAO implements NewsDAO_interface {
 					se.printStackTrace(System.err);
 				}
 			}
+
 			if (con != null) {
 				try {
 					con.close();
@@ -57,7 +55,7 @@ public class NewsJDBCDAO implements NewsDAO_interface {
 	}
 
 	@Override
-	public void update(NewsVO newsVO) {
+	public void update(RuleVO ruleVO) {
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		try {
@@ -65,9 +63,9 @@ public class NewsJDBCDAO implements NewsDAO_interface {
 			con = DriverManager.getConnection(url, userid, passwd);
 			pstmt = con.prepareStatement(UPDATE);
 
-			pstmt.setString(1, newsVO.getNewsTitle());
-			pstmt.setString(2, newsVO.getNewsCon());
-			pstmt.setInt(3, newsVO.getNewsNo());
+			pstmt.setString(1, ruleVO.getRuleName());
+			pstmt.setString(2, ruleVO.getRuleCon());
+			pstmt.setInt(3, ruleVO.getRuleNo());
 
 			pstmt.executeUpdate();
 
@@ -95,8 +93,7 @@ public class NewsJDBCDAO implements NewsDAO_interface {
 	}
 
 	@Override
-	public void delete(Integer newsNo) {
-		// TODO Auto-generated method stub
+	public void delete(Integer ruleNo) {
 		Connection con = null;
 		PreparedStatement pstmt = null;
 
@@ -106,7 +103,7 @@ public class NewsJDBCDAO implements NewsDAO_interface {
 			con = DriverManager.getConnection(url, userid, passwd);
 			pstmt = con.prepareStatement(DELETE);
 
-			pstmt.setInt(1, newsNo);
+			pstmt.setInt(1, ruleNo);
 
 			pstmt.executeUpdate();
 
@@ -136,8 +133,8 @@ public class NewsJDBCDAO implements NewsDAO_interface {
 	}
 
 	@Override
-	public NewsVO findByPrimaryKey(Integer newsNo) {
-		NewsVO newsVO = null;
+	public RuleVO findByPrimaryKey(Integer ruleNo) {
+		RuleVO ruleVO = null;
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
@@ -148,17 +145,16 @@ public class NewsJDBCDAO implements NewsDAO_interface {
 			con = DriverManager.getConnection(url, userid, passwd);
 			pstmt = con.prepareStatement(GET_ONE_STMT);
 
-			pstmt.setInt(1, newsNo);
+			pstmt.setInt(1, ruleNo);
 
 			rs = pstmt.executeQuery();
 
 			while (rs.next()) {
 				// deptVO 也稱為 Domain objects
-				newsVO = new NewsVO();
-				newsVO.setNewsNo(rs.getInt("newsNo"));
-				newsVO.setNewsTitle(rs.getString("newsTitle"));
-				newsVO.setNewsCon(rs.getString("newsCon"));
-				newsVO.setNewsTime(rs.getDate("newsTime"));
+				ruleVO = new RuleVO();
+				ruleVO.setRuleNo(rs.getInt("ruleNo"));
+				ruleVO.setRuleName(rs.getString("ruleName"));
+				ruleVO.setRuleCon(rs.getString("ruleCon"));
 			}
 
 			// Handle any driver errors
@@ -191,13 +187,13 @@ public class NewsJDBCDAO implements NewsDAO_interface {
 				}
 			}
 		}
-		return newsVO;
+		return ruleVO;
 	}
 
 	@Override
-	public List<NewsVO> getAll() {
-		List<NewsVO> list = new ArrayList<NewsVO>();
-		NewsVO newsVO = null;
+	public List<RuleVO> getAll() {
+		List<RuleVO> list = new ArrayList<RuleVO>();
+		RuleVO ruleVO = null;
 
 		Connection con = null;
 		PreparedStatement pstmt = null;
@@ -214,13 +210,12 @@ public class NewsJDBCDAO implements NewsDAO_interface {
 				// deptVO 也稱為 Domain objects
 				// memName,memGender,memPic,memInform,memEmail,memPswd,memPhone,memAddr,memBal,memStatus,memEndDate,
 				// memCode
-				newsVO = new NewsVO();
-				newsVO.setNewsNo(rs.getInt("newsNo"));
-				newsVO.setNewsTitle(rs.getString("newsTitle"));
-				newsVO.setNewsCon(rs.getString("newsCon"));
-				newsVO.setNewsTime(rs.getDate("newsTime"));
+				ruleVO = new RuleVO();
+				ruleVO.setRuleNo(rs.getInt("ruleNo"));
+				ruleVO.setRuleName(rs.getString("ruleName"));
+				ruleVO.setRuleCon(rs.getString("ruleCon"));
 
-				list.add(newsVO);
+				list.add(ruleVO);
 			}
 
 			// Handle any driver errors
@@ -256,51 +251,42 @@ public class NewsJDBCDAO implements NewsDAO_interface {
 		return list;
 	}
 
-	public boolean validate(NewsVO newsVO) {
-		return false;
-	}
-
 	public static void main(String[] args) {
-		NewsJDBCDAO dao = new NewsJDBCDAO();
+		RuleJDBCDAO dao = new RuleJDBCDAO();
 
-//		System.out.println(123);
+		// insert test
+//		RuleVO ruleVO = new RuleVO();
+//		
+//		ruleVO.setRuleName("最夯訊息");
+//		ruleVO.setRuleCon("長直髮,短髮");
+//		
+//		dao.insert(ruleVO);
 
-		 	//insert test
-//			NewsVO newsVO = new NewsVO();
-//			newsVO.setNewsTitle("abcd");;
-//			newsVO.setNewsCon("Lot of place");;
-////			newsVO.set;
-//			dao.insert(newsVO);
-
-//		 update test
-//			NewsVO newsVO = new NewsVO();
-//			newsVO.setNewsNo(6);
-//			newsVO.setNewsTitle("ab");;
-//			newsVO.setNewsCon("Lot e");;
+		// update test
+//		RuleVO ruleVO = new RuleVO();
+//		ruleVO.setRuleNo(6);
+//		ruleVO.setRuleName("ab");
+//		ruleVO.setRuleCon("Lot e");
 //
-//			dao.update(newsVO);
+//		dao.update(ruleVO);
 
 		// 查詢
-//		NewsVO newsVO = dao.findByPrimaryKey(1);
-//		System.out.print(newsVO.getNewsNo() + ", ");
-//		System.out.print(newsVO.getNewsTime() + ", ");
-//		System.out.print(newsVO.getNewsTitle() + ", ");
-//		System.out.print(newsVO.getNewsCon() + ", ");
-//		System.out.println(newsVO.getNewsPic());
+//		RuleVO ruleVO = dao.findByPrimaryKey(5);
+//		System.out.print(ruleVO.getRuleNo() + ", ");
+//		System.out.print(ruleVO.getRuleName() + ", ");
+//		System.out.println(ruleVO.getRuleCon());
 //		System.out.println("--------------------------------------------------------------------------------------");
 
 		// get all
-//		List<NewsVO> list = dao.getAll();
-//		for (NewsVO newsVO : list) {
-//			System.out.print(newsVO.getNewsNo() + ", ");
-//			System.out.print(newsVO.getNewsTime() + ", ");
-//			System.out.print(newsVO.getNewsTitle() + ", ");
-//			System.out.print(newsVO.getNewsCon() + ", ");
-//			System.out.println(newsVO.getNewsPic());
+//		List<RuleVO> list = dao.getAll();
+//		for (RuleVO ruleVO : list) {
+//			System.out.print(ruleVO.getRuleNo() + ", ");
+//			System.out.print(ruleVO.getRuleName() + ", ");
+//			System.out.println(ruleVO.getRuleCon() );
 //			System.out.println("--------------------------------------------------------------------------------------");
 //		}
 		// delete
-		dao.delete(6);
+//		dao.delete(6);
 	}
 
 }

@@ -1,9 +1,6 @@
 package com.news.model;
 
 import java.util.List;
-import java.util.Set;
-
-import com.staff.model.StaffVO;
 
 public interface NewsDAO_interface {
 	public void insert(NewsVO newsVO);
