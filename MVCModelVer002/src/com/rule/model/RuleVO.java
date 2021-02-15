@@ -10,7 +10,6 @@ public class RuleVO implements Serializable{
 	
 	public RuleVO() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 	public Integer getRuleNo() {
 		return ruleNo;

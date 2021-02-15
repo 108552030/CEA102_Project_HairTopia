@@ -2,8 +2,6 @@ package com.rule.model;
 
 import java.util.List;
 
-import com.news.model.NewsVO;
-
 public class RuleService {
 	private RuleDAO_interface dao;
 

@@ -1,53 +1,51 @@
-package com.member.model;
+package com.transaction_record.model;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
-import javax.sql.DataSource;
 import javax.naming.Context;
 import javax.naming.InitialContext;
-import javax.naming.NamingException;
+import javax.sql.DataSource;
 
-public class MemDAO implements MemDAO_interface{
+public class TransRecDAO implements TransRecDAO_interface{
 
 	private static DataSource ds = null;
 	
 	static {
 		try {
-			Context ctx = new InitialContext();
-			ds = (DataSource) ctx.lookup("java:comp/env/jdbc/David");
-		} catch (NamingException e) {
+			Context cx = new InitialContext();
+			ds = (DataSource)cx.lookup("java:comp/env/jdbc/David");
+		}catch(Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
-	//memNo,memName,memGender,memPic,memInform,memEmail,memPswd,memPhone,memAddr,memBal,memStatus,memEndDate, memCode
-	private static final String INSERT_STMT = "INSERT INTO MEMBER (memName, memEmail, memPswd) VALUES (?, ?, ?)";
-	private static final String GET_ALL_STMT = "SELECT * FROM MEMBER";
-	private static final String GET_ONE_STMT = "SELECT memNO, memName, memEmail, memPswd FROM MEMBER WHERE memNO = ?";
-	private static final String VALIDATE_STMT = "SELECT * FROM MEMBER WHERE memEmail=? AND memPswd=?";
-	private static final String DELETE = "DELETE FROM MEMBER WHERE memNO = ?";
-	private static final String UPDATE = "UPDATE MEMBER set memName=?, memEmail=?, memPswd= ? WHERE memNO = ?";
+
+	private static final String INSERT_STMT = "INSERT INTO TRANSACTION_RECORD (memNo, traDes, traPri, traBal) VALUES ( ?, ?, ?, ?)";
+	private static final String GET_ALL_STMT = "SELECT * FROM TRANSACTION_RECORD";
+	private static final String GET_ONE_STMT = "SELECT * FROM TRANSACTION_RECORD WHERE traNo = ?";
+	private static final String DELETE = "DELETE FROM TRANSACTION_RECORD WHERE traNo = ?";
+	private static final String UPDATE = "UPDATE TRANSACTION_RECORD SET memNo=?, traDes=? , traPri=?, traBal=? WHERE traNo = ?";
 
 
 	@Override
-	public void insert(MemVO memVO) {
+	public void insert(TransRecVO transRecVO) {
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		try {
 			con = ds.getConnection();
 			pstmt = con.prepareStatement(INSERT_STMT);
-			
-			pstmt.setString(1, memVO.getMemName());
-			pstmt.setString(2, memVO.getMemEmail());
-			pstmt.setString(3, memVO.getMemPswd());
+
+			pstmt.setInt(1, transRecVO.getMemNo());
+			pstmt.setInt(2, transRecVO.getTraDes());
+			pstmt.setInt(3, transRecVO.getTraPri());
+			pstmt.setInt(4, transRecVO.getTraBal());
 
 			pstmt.executeUpdate();
-
 		} catch (SQLException se) {
 			throw new RuntimeException("A database error occured. " + se.getMessage());
 		} finally {
@@ -58,6 +56,7 @@ public class MemDAO implements MemDAO_interface{
 					se.printStackTrace(System.err);
 				}
 			}
+
 			if (con != null) {
 				try {
 					con.close();
@@ -69,21 +68,20 @@ public class MemDAO implements MemDAO_interface{
 	}
 
 	@Override
-	public void update(MemVO memVO) {
-		// TODO Auto-generated method stub
+	public void update(TransRecVO transRecVO) {
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		try {
 			con = ds.getConnection();
 			pstmt = con.prepareStatement(UPDATE);
-			
-			pstmt.setString(1, memVO.getMemName());
-			pstmt.setString(2, memVO.getMemEmail());
-			pstmt.setString(3, memVO.getMemPswd());
-			pstmt.setInt(4, memVO.getMemNo());
 
-			int a = pstmt.executeUpdate();
-			System.out.println(a);
+			pstmt.setInt(1, transRecVO.getMemNo());
+			pstmt.setInt(2, transRecVO.getTraDes());
+			pstmt.setInt(3, transRecVO.getTraPri());
+			pstmt.setInt(4, transRecVO.getTraBal());
+			pstmt.setInt(5, transRecVO.getTraNo());
+
+			pstmt.executeUpdate();
 
 		} catch (SQLException se) {
 			throw new RuntimeException("A database error occured. " + se.getMessage());
@@ -103,27 +101,25 @@ public class MemDAO implements MemDAO_interface{
 				}
 			}
 		}
-
 	}
 
 	@Override
-	public void delete(Integer memNo) {
-		// TODO Auto-generated method stub
+	public void delete(Integer traNo) {
 		Connection con = null;
 		PreparedStatement pstmt = null;
 
 		try {
+
 			con = ds.getConnection();
 			pstmt = con.prepareStatement(DELETE);
 
-			pstmt.setInt(1, memNo);
-			
+			pstmt.setInt(1, traNo);
+
 			pstmt.executeUpdate();
 
 			// Handle any driver errors
 		} catch (SQLException se) {
-			throw new RuntimeException("A database error occured. "
-					+ se.getMessage());
+			throw new RuntimeException("A database error occured. " + se.getMessage());
 			// Clean up JDBC resources
 		} finally {
 			if (pstmt != null) {
@@ -144,27 +140,30 @@ public class MemDAO implements MemDAO_interface{
 	}
 
 	@Override
-	public MemVO findByPrimaryKey(Integer memNo) {
-		MemVO memVO = null;
+	public TransRecVO findByPrimaryKey(Integer traNo) {
+		TransRecVO transRecVO = null;
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 
 		try {
+
 			con = ds.getConnection();
 			pstmt = con.prepareStatement(GET_ONE_STMT);
 
-			pstmt.setInt(1, memNo);
+			pstmt.setInt(1, traNo);
 
 			rs = pstmt.executeQuery();
 
 			while (rs.next()) {
 				// deptVO 也稱為 Domain objects
-				memVO = new MemVO();
-				memVO.setMemNo(memNo);
-				memVO.setMemName(rs.getString("memName"));
-				memVO.setMemEmail(rs.getString("memEmail"));
-				memVO.setMemPswd(rs.getString("memPswd"));
+				transRecVO = new TransRecVO();
+				transRecVO.setTraNo(rs.getInt("traNo"));
+				transRecVO.setMemNo(rs.getInt("memNO"));
+				transRecVO.setTraTime(rs.getDate("traTime"));
+				transRecVO.setTraDes(rs.getInt("traDes"));
+				transRecVO.setTraPri(rs.getInt("traPri"));
+				transRecVO.setTraBal(rs.getInt("traBal"));
 			}
 
 			// Handle any driver errors
@@ -194,82 +193,36 @@ public class MemDAO implements MemDAO_interface{
 				}
 			}
 		}
-		return memVO;
+		return transRecVO;
 	}
 
 	@Override
-	public List<MemVO> getAll() {
-		List<MemVO> list = new ArrayList<MemVO>();
-		MemVO memVO = null;
-		
+	public List<TransRecVO> getAll() {
+		List<TransRecVO> list = new ArrayList<TransRecVO>();
+		TransRecVO transRecVO = null;
+
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
-		
+
 		try {
+
 			con = ds.getConnection();
 			pstmt = con.prepareStatement(GET_ALL_STMT);
 			rs = pstmt.executeQuery();
 
 			while (rs.next()) {
-				// deptVO 也稱為 Domain objects
-				memVO = new MemVO();
-				memVO.setMemNo(rs.getInt("memNo"));
-				memVO.setMemName(rs.getString("memName"));
-				memVO.setMemEmail(rs.getString("memEmail"));
-				memVO.setMemPswd(rs.getString("memPswd"));
-				list.add(memVO);
+				transRecVO = new TransRecVO();
+				transRecVO.setTraNo(rs.getInt("traNo"));
+				transRecVO.setMemNo(rs.getInt("memNO"));
+				transRecVO.setTraTime(rs.getDate("traTime"));
+				transRecVO.setTraDes(rs.getInt("traDes"));
+				transRecVO.setTraPri(rs.getInt("traPri"));
+				transRecVO.setTraBal(rs.getInt("traBal"));
+
+				list.add(transRecVO);
 			}
 
-			// Handle any driver errors
-		} catch (SQLException se) {
-			throw new RuntimeException("A database error occured. " + se.getMessage());
-			// Clean up JDBC resources
-		} finally {
-			if (rs != null) {
-				try {
-					rs.close();
-				} catch (SQLException se) {
-					se.printStackTrace(System.err);
-				}
-			}
-			if (pstmt != null) {
-				try {
-					pstmt.close();
-				} catch (SQLException se) {
-					se.printStackTrace(System.err);
-				}
-			}
-			if (con != null) {
-				try {
-					con.close();
-				} catch (Exception e) {
-					e.printStackTrace(System.err);
-				}
-			}
-		}	
-		return list;
-	}
-	
-	
-	public boolean validate(MemVO memVO) {
-		boolean status=false;
-		
-		Connection con = null;
-		PreparedStatement pstmt = null;
-		ResultSet rs = null;
-
-		try {
-			con = ds.getConnection();
-			pstmt = con.prepareStatement(VALIDATE_STMT);
-			
-			pstmt.setString(1, memVO.getMemEmail());
-			pstmt.setString(2, memVO.getMemPswd());
-
-			rs = pstmt.executeQuery();
-			
-			status=rs.next();
-			
 			// Handle any driver errors
 		} catch (SQLException se) {
 			throw new RuntimeException("A database error occured. " + se.getMessage());
@@ -297,8 +250,7 @@ public class MemDAO implements MemDAO_interface{
 				}
 			}
 		}
-		return status;
+		return list;
 	}
-
 
 }

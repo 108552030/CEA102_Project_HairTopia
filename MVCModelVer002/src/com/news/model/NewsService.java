@@ -33,11 +33,11 @@ public class NewsService {
 		return newsVO;
 	}
 	
-	public void deleteMember(Integer newsNo) {
+	public void deleteNews(Integer newsNo) {
 		dao.delete(newsNo);
 	}
 	
-	public NewsVO getOneMem(Integer newsNo) {
+	public NewsVO getOneNews(Integer newsNo) {
 		return dao.findByPrimaryKey(newsNo);
 	}
 	
