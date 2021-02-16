@@ -1,38 +1,39 @@
-package com.news.model;
+package com.chat.model;
 
-import java.sql.DriverManager;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+
 import java.sql.*;
 
-public class NewsJDBCDAO implements NewsDAO_interface {
+public class ChatJDBCDAO implements ChatDAO_interface {
+
 	String driver = "com.mysql.cj.jdbc.Driver";
 	String url = "jdbc:mysql://localhost:3306/hairtopia?serverTimezone=Asia/Taipei";
 	String userid = "David";
 	String passwd = "123456";
 
-	// memNo,memName,memGender,memPic,memInform,memEmail,memPswd,memPhone,memAddr,memBal,memStatus,memEndDate,
-	// memCode
-
-	private static final String INSERT_STMT = "INSERT INTO NEWS (newsTitle, newsCon) VALUES ( ?, ?)";
-	private static final String GET_ALL_STMT = "SELECT * FROM NEWS";
-	private static final String GET_ONE_STMT = "SELECT * FROM NEWS WHERE newsNo = ?";
-//	private static final String VALIDATE_STMT = "SELECT * FROM MEMBER WHERE memEmail=? AND memPswd=?";
-	private static final String DELETE = "DELETE FROM NEWS WHERE newsNo = ?";
-	private static final String UPDATE = "UPDATE NEWS SET newsTitle=?, newsCon=? WHERE newsNo = ?";
+	private static final String INSERT_TEXT_STMT = "INSERT INTO CHAT (chatSender, chatReceiver, chatText) VALUES (?, ?, ?)";
+	private static final String INSERT_PIC_STMT = "INSERT INTO CHAT (chatSender, chatReceiver, chatPic) VALUES (?, ?, ?)";
+	private static final String GET_ALL_STMT = "SELECT * FROM CHAT";
+	private static final String GET_ONE_STMT = "SELECT * FROM CHAT WHERE chatNo = ?";
+	private static final String DELETE = "DELETE FROM CHAT WHERE chatNo = ?";
+	private static final String UPDATE = "UPDATE CHAT set chatSender=?, chatReceiver=?, chatText= ? WHERE chatNo = ?";
 
 	@Override
-	public void insert(NewsVO newsVO) {
+	public void insert(ChatVO chatVO) {
 		Connection con = null;
 		PreparedStatement pstmt = null;
+
 		try {
 			Class.forName(driver);
 			con = DriverManager.getConnection(url, userid, passwd);
-			pstmt = con.prepareStatement(INSERT_STMT);
-			pstmt.setString(1, newsVO.getNewsTitle());
-			pstmt.setString(2, newsVO.getNewsCon());
-//			pstmt.setString(12, memVO.getMemCode());
+			pstmt = con.prepareStatement(INSERT_TEXT_STMT);
 
-			pstmt.executeUpdate();
+			pstmt.setInt(1, chatVO.getChatSender());
+			pstmt.setInt(2, chatVO.getChatReceiver());
+			pstmt.setString(3, chatVO.getChatText());
+
+			pstmt.execute();
 
 		} catch (ClassNotFoundException e) {
 			throw new RuntimeException("Couldn't load database driver. " + e.getMessage());
@@ -57,7 +58,7 @@ public class NewsJDBCDAO implements NewsDAO_interface {
 	}
 
 	@Override
-	public void update(NewsVO newsVO) {
+	public void update(ChatVO chatVO) {
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		try {
@@ -65,9 +66,10 @@ public class NewsJDBCDAO implements NewsDAO_interface {
 			con = DriverManager.getConnection(url, userid, passwd);
 			pstmt = con.prepareStatement(UPDATE);
 
-			pstmt.setString(1, newsVO.getNewsTitle());
-			pstmt.setString(2, newsVO.getNewsCon());
-			pstmt.setInt(3, newsVO.getNewsNo());
+			pstmt.setInt(1, chatVO.getChatSender());
+			pstmt.setInt(2, chatVO.getChatReceiver());
+			pstmt.setString(3, chatVO.getChatText());
+			pstmt.setInt(4, chatVO.getChatNo());
 
 			pstmt.executeUpdate();
 
@@ -91,12 +93,10 @@ public class NewsJDBCDAO implements NewsDAO_interface {
 				}
 			}
 		}
-
 	}
 
 	@Override
-	public void delete(Integer newsNo) {
-		// TODO Auto-generated method stub
+	public void delete(Integer chatNo) {
 		Connection con = null;
 		PreparedStatement pstmt = null;
 
@@ -106,7 +106,7 @@ public class NewsJDBCDAO implements NewsDAO_interface {
 			con = DriverManager.getConnection(url, userid, passwd);
 			pstmt = con.prepareStatement(DELETE);
 
-			pstmt.setInt(1, newsNo);
+			pstmt.setInt(1, chatNo);
 
 			pstmt.executeUpdate();
 
@@ -136,8 +136,8 @@ public class NewsJDBCDAO implements NewsDAO_interface {
 	}
 
 	@Override
-	public NewsVO findByPrimaryKey(Integer newsNo) {
-		NewsVO newsVO = null;
+	public ChatVO findByPrimaryKey(Integer chatNo) {
+		ChatVO chatVO = null;
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
@@ -148,17 +148,18 @@ public class NewsJDBCDAO implements NewsDAO_interface {
 			con = DriverManager.getConnection(url, userid, passwd);
 			pstmt = con.prepareStatement(GET_ONE_STMT);
 
-			pstmt.setInt(1, newsNo);
+			pstmt.setInt(1, chatNo);
 
 			rs = pstmt.executeQuery();
 
 			while (rs.next()) {
 				// deptVO 也稱為 Domain objects
-				newsVO = new NewsVO();
-				newsVO.setNewsNo(rs.getInt("newsNo"));
-				newsVO.setNewsTitle(rs.getString("newsTitle"));
-				newsVO.setNewsCon(rs.getString("newsCon"));
-				newsVO.setNewsTime(rs.getDate("newsTime"));
+				chatVO = new ChatVO();
+				chatVO.setChatNo(rs.getInt("chatNo"));
+				chatVO.setChatSender(rs.getInt("chatSender"));
+				chatVO.setChatReceiver(rs.getInt("chatReceiver"));
+				chatVO.setChatText(rs.getString("chatText"));
+				chatVO.setChatTime(rs.getTimestamp("chatTime"));
 			}
 
 			// Handle any driver errors
@@ -191,13 +192,13 @@ public class NewsJDBCDAO implements NewsDAO_interface {
 				}
 			}
 		}
-		return newsVO;
+		return chatVO;
 	}
 
 	@Override
-	public List<NewsVO> getAll() {
-		List<NewsVO> list = new ArrayList<NewsVO>();
-		NewsVO newsVO = null;
+	public List<ChatVO> getAll() {
+		List<ChatVO> list = new ArrayList<ChatVO>();
+		ChatVO chatVO = null;
 
 		Connection con = null;
 		PreparedStatement pstmt = null;
@@ -211,16 +212,15 @@ public class NewsJDBCDAO implements NewsDAO_interface {
 			rs = pstmt.executeQuery();
 
 			while (rs.next()) {
-				// deptVO 也稱為 Domain objects
-				// memName,memGender,memPic,memInform,memEmail,memPswd,memPhone,memAddr,memBal,memStatus,memEndDate,
-				// memCode
-				newsVO = new NewsVO();
-				newsVO.setNewsNo(rs.getInt("newsNo"));
-				newsVO.setNewsTitle(rs.getString("newsTitle"));
-				newsVO.setNewsCon(rs.getString("newsCon"));
-				newsVO.setNewsTime(rs.getDate("newsTime"));
 
-				list.add(newsVO);
+				chatVO = new ChatVO();
+				chatVO.setChatNo(rs.getInt("chatNo"));
+				chatVO.setChatSender(rs.getInt("chatSender"));
+				chatVO.setChatReceiver(rs.getInt("chatReceiver"));
+				chatVO.setChatText(rs.getString("chatText"));
+				chatVO.setChatTime(rs.getTimestamp("chatTime"));
+
+				list.add(chatVO);
 			}
 
 			// Handle any driver errors
@@ -256,48 +256,51 @@ public class NewsJDBCDAO implements NewsDAO_interface {
 		return list;
 	}
 
-
 	public static void main(String[] args) {
-		NewsJDBCDAO dao = new NewsJDBCDAO();
+		ChatJDBCDAO dao = new ChatJDBCDAO();
 
 //		System.out.println(123);
 
-		 	//insert test
-//			NewsVO newsVO = new NewsVO();
-//			newsVO.setNewsTitle("abcd");;
-//			newsVO.setNewsCon("Lot of place");;
-////			newsVO.set;
-//			dao.insert(newsVO);
+		// insert test
+//		ChatVO chatVO = new ChatVO();
+//		chatVO.setChatSender(1);
+//		chatVO.setChatReceiver(2);
+//		chatVO.setChatText("hello");
+//		dao.insert(chatVO);
 
-//		 update test
-//			NewsVO newsVO = new NewsVO();
-//			newsVO.setNewsNo(6);
-//			newsVO.setNewsTitle("ab");;
-//			newsVO.setNewsCon("Lot e");;
-//
-//			dao.update(newsVO);
+		// update test
+//		ChatVO chatVO = new ChatVO();
+//		chatVO.setChatNo(6);
+//		chatVO.setChatSender(1);
+//		chatVO.setChatReceiver(2);;
+//		chatVO.setChatText("132132");;
+//		dao.update(chatVO);
 
 		// 查詢
-//		NewsVO newsVO = dao.findByPrimaryKey(1);
-//		System.out.print(newsVO.getNewsNo() + ", ");
-//		System.out.print(newsVO.getNewsTime() + ", ");
-//		System.out.print(newsVO.getNewsTitle() + ", ");
-//		System.out.print(newsVO.getNewsCon() + ", ");
-//		System.out.println(newsVO.getNewsPic());
+//		ChatVO chatVO = dao.findByPrimaryKey(2);
+//		System.out.print(chatVO.getChatNo() + ", ");
+//		System.out.print(chatVO.getChatSender() + ", ");
+//		System.out.print(chatVO.getChatReceiver() + ", ");
+//		System.out.print(chatVO.getChatText() + ", ");
+//		System.out.print(chatVO.getChatPic() + ", ");
+//		System.out.print(chatVO.getChatIsRead() + ", ");
+//		System.out.println(chatVO.getChatTime());
 //		System.out.println("--------------------------------------------------------------------------------------");
 
 		// get all
-//		List<NewsVO> list = dao.getAll();
-//		for (NewsVO newsVO : list) {
-//			System.out.print(newsVO.getNewsNo() + ", ");
-//			System.out.print(newsVO.getNewsTime() + ", ");
-//			System.out.print(newsVO.getNewsTitle() + ", ");
-//			System.out.print(newsVO.getNewsCon() + ", ");
-//			System.out.println(newsVO.getNewsPic());
-//			System.out.println("--------------------------------------------------------------------------------------");
+//		List<ChatVO> list = dao.getAll();
+//		for (ChatVO chatVO : list) {
+//			System.out.print(chatVO.getChatNo() + ", ");
+//			System.out.print(chatVO.getChatSender() + ", ");
+//			System.out.print(chatVO.getChatReceiver() + ", ");
+//			System.out.print(chatVO.getChatText() + ", ");
+//			System.out.print(chatVO.getChatPic() + ", ");
+//			System.out.print(chatVO.getChatIsRead() + ", ");
+//			System.out.println(chatVO.getChatTime());
+//			System.out
+//					.println("--------------------------------------------------------------------------------------");
 //		}
 		// delete
 		dao.delete(6);
 	}
-
 }

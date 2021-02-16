@@ -1,9 +1,6 @@
 package com.member.model;
 
 import java.util.List;
-import java.util.Set;
-
-import com.staff.model.StaffVO;
 
 public interface MemDAO_interface {
 	public void insert(MemVO memVO);
