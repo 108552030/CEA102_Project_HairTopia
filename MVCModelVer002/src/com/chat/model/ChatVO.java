@@ -8,7 +8,7 @@ public class ChatVO implements java.io.Serializable{
 	private Integer chatReceiver;
 	private String chatText;
 	private java.sql.Timestamp chatTime;
-	private Short chatIsRead;
+	private Boolean chatIsRead;
 	private byte[] chatPic;
 	
 	public ChatVO() {
@@ -54,11 +54,11 @@ public class ChatVO implements java.io.Serializable{
 		this.chatTime = chatTime;
 	}
 
-	public Short getChatIsRead() {
+	public Boolean getChatIsRead() {
 		return chatIsRead;
 	}
 
-	public void setChatIsRead(Short chatIsRead) {
+	public void setChatIsRead(Boolean chatIsRead) {
 		this.chatIsRead = chatIsRead;
 	}
 

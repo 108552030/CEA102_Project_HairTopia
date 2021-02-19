@@ -1,14 +1,16 @@
-package com.chat.model;
+package com.notification.model;
 
 import java.sql.*;
 import java.util.*;
-import javax.naming.*;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.sql.DataSource;
 
 
-public class ChatDAO implements ChatDAO_interface{
+public class NotiDAO implements NotiDAO_interface{
 
-	private static DataSource ds = null;
+private static DataSource ds = null;
 	
 	static {
 		try {
@@ -19,15 +21,15 @@ public class ChatDAO implements ChatDAO_interface{
 		}
 	}
 	
-	private static final String INSERT_TEXT_STMT = "INSERT INTO CHAT (chatSender, chatReceiver, chatText) VALUES (?, ?, ?)";
-	private static final String INSERT_PIC_STMT = "INSERT INTO CHAT (chatSender, chatReceiver, chatPic) VALUES (?, ?, ?)";
-	private static final String GET_ALL_STMT = "SELECT * FROM CHAT";
-	private static final String GET_ONE_STMT = "SELECT * FROM CHAT WHERE chatNo = ?";
-	private static final String DELETE = "DELETE FROM CHAT WHERE chatNo = ?";
-	private static final String UPDATE = "UPDATE CHAT set chatSender=?, chatReceiver=?, chatText= ? WHERE chatNo = ?";
+	private static final String INSERT_TEXT_STMT = "INSERT INTO NOTIFICATION (memNo, notiText) VALUES (?, ?)";
+	private static final String GET_ALL_STMT = "SELECT * FROM NOTIFICATION";
+	private static final String GET_ONE_STMT = "SELECT * FROM NOTIFICATION WHERE notiNo = ?";
+	private static final String DELETE = "DELETE FROM NOTIFICATION WHERE notiNo = ?";
+	private static final String UPDATE = "UPDATE NOTIFICATION set memNo=?, notiText=?, notiIsRead= ? WHERE notiNo = ?";
+
 	
 	@Override
-	public void insert(ChatVO chatVO) {
+	public void insert(NotiVO notiVO) {
 		Connection con = null;
 		PreparedStatement pstmt = null;
 
@@ -35,9 +37,8 @@ public class ChatDAO implements ChatDAO_interface{
 			con = ds.getConnection();
 			pstmt = con.prepareStatement(INSERT_TEXT_STMT);
 
-			pstmt.setInt(1, chatVO.getChatSender());
-			pstmt.setInt(2, chatVO.getChatReceiver());
-			pstmt.setString(3, chatVO.getChatText());
+			pstmt.setInt(1, notiVO.getMemNo());
+			pstmt.setString(2, notiVO.getNotiText());
 
 			pstmt.execute();
 
@@ -62,17 +63,17 @@ public class ChatDAO implements ChatDAO_interface{
 	}
 
 	@Override
-	public void update(ChatVO chatVO) {
+	public void update(NotiVO notiVO) {
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		try {
 			con = ds.getConnection();
 			pstmt = con.prepareStatement(UPDATE);
 
-			pstmt.setInt(1, chatVO.getChatSender());
-			pstmt.setInt(2, chatVO.getChatReceiver());
-			pstmt.setString(3, chatVO.getChatText());
-			pstmt.setInt(4, chatVO.getChatNo());
+			pstmt.setInt(1, notiVO.getMemNo());
+			pstmt.setString(2, notiVO.getNotiText());
+			pstmt.setBoolean(3, notiVO.getNotiIsRead());
+			pstmt.setInt(4, notiVO.getNotiNo());
 
 			pstmt.executeUpdate();
 
@@ -97,7 +98,7 @@ public class ChatDAO implements ChatDAO_interface{
 	}
 
 	@Override
-	public void delete(Integer chatNo) {
+	public void delete(Integer notiNo) {
 		Connection con = null;
 		PreparedStatement pstmt = null;
 
@@ -106,7 +107,7 @@ public class ChatDAO implements ChatDAO_interface{
 			con = ds.getConnection();
 			pstmt = con.prepareStatement(DELETE);
 
-			pstmt.setInt(1, chatNo);
+			pstmt.setInt(1, notiNo);
 
 			pstmt.executeUpdate();
 
@@ -133,8 +134,8 @@ public class ChatDAO implements ChatDAO_interface{
 	}
 
 	@Override
-	public ChatVO findByPrimaryKey(Integer chatNo) {
-		ChatVO chatVO = null;
+	public NotiVO findByPrimaryKey(Integer notiNo) {
+		NotiVO notiVO = null;
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
@@ -144,18 +145,18 @@ public class ChatDAO implements ChatDAO_interface{
 			con = ds.getConnection();
 			pstmt = con.prepareStatement(GET_ONE_STMT);
 
-			pstmt.setInt(1, chatNo);
+			pstmt.setInt(1, notiNo);
 
 			rs = pstmt.executeQuery();
 
 			while (rs.next()) {
 				// deptVO 也稱為 Domain objects
-				chatVO = new ChatVO();
-				chatVO.setChatNo(rs.getInt("chatNo"));
-				chatVO.setChatSender(rs.getInt("chatSender"));
-				chatVO.setChatReceiver(rs.getInt("chatReceiver"));
-				chatVO.setChatText(rs.getString("chatText"));
-				chatVO.setChatTime(rs.getTimestamp("chatTime"));
+				notiVO = new NotiVO();
+				notiVO.setNotiNo(rs.getInt("notiNo"));
+				notiVO.setMemNo(rs.getInt("memNo"));
+				notiVO.setNotiText(rs.getString("notiText"));
+				notiVO.setNotiTime(rs.getTimestamp("notiTime"));
+				notiVO.setNotiIsRead(rs.getBoolean("notiIsRead"));
 			}
 
 			// Handle any driver errors
@@ -185,13 +186,13 @@ public class ChatDAO implements ChatDAO_interface{
 				}
 			}
 		}
-		return chatVO;
+		return notiVO;
 	}
 
 	@Override
-	public List<ChatVO> getAll() {
-		List<ChatVO> list = new ArrayList<ChatVO>();
-		ChatVO chatVO = null;
+	public List<NotiVO> getAll() {
+		List<NotiVO> list = new ArrayList<NotiVO>();
+		NotiVO notiVO = null;
 
 		Connection con = null;
 		PreparedStatement pstmt = null;
@@ -204,16 +205,14 @@ public class ChatDAO implements ChatDAO_interface{
 			rs = pstmt.executeQuery();
 
 			while (rs.next()) {
+				notiVO = new NotiVO();
+				notiVO.setNotiNo(rs.getInt("notiNo"));
+				notiVO.setMemNo(rs.getInt("memNo"));
+				notiVO.setNotiText(rs.getString("notiText"));
+				notiVO.setNotiTime(rs.getTimestamp("notiTime"));
+				notiVO.setNotiIsRead(rs.getBoolean("notiIsRead"));
 
-				chatVO = new ChatVO();
-				chatVO.setChatNo(rs.getInt("chatNo"));
-				chatVO.setChatSender(rs.getInt("chatSender"));
-				chatVO.setChatReceiver(rs.getInt("chatReceiver"));
-				chatVO.setChatText(rs.getString("chatText"));
-				chatVO.setChatTime(rs.getTimestamp("chatTime"));
-				chatVO.setChatIsRead(rs.getBoolean("chatIsRead"));
-
-				list.add(chatVO);
+				list.add(notiVO);
 			}
 
 			// Handle any driver errors
@@ -245,5 +244,5 @@ public class ChatDAO implements ChatDAO_interface{
 		}
 		return list;
 	}
-
+	
 }
