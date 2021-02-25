@@ -50,25 +50,22 @@
 <table id="table-1">
 	<tr><td>
 		 <h3>員工資料 - ListOneEmp.jsp</h3>
-		 <h4><a href="select_page.jsp"><img src="images/back1.gif" width="100" height="32" border="0">回首頁</a></h4>
+		 <h4><a href="<%=request.getContextPath()%>/frontEnd/news/select_page.jsp"><img src="<%=request.getContextPath()%>/resource/images/back1.gif" width="100" height="32" border="0">回首頁</a></h4>
 	</td></tr>
 </table>
 
 <table>
 	<tr>
-		<th>員工編號</th>
-		<th>員工姓名</th>
-		<th>職位</th>
-		<th>雇用日期</th>
-		<th>薪水</th>
-		<th>獎金</th>
-		<th>部門</th>
+		<th>新聞編號</th>
+		<th>新聞時間</th>
+		<th>新聞標題</th>
+		<th>新聞內容</th>
 	</tr>
 	<tr>
-<%-- 		<td><%=empVO.getEmpno()%></td> --%>
-<%-- 		<td><%=empVO.getEname()%></td> --%>
-<%-- 		<td><%=empVO.getJob()%></td> --%>
-<%-- 		<td><%=empVO.getHiredate()%></td> --%>
+		<td><%=newsVO.getNewsNo()%></td>
+		<td><%=newsVO.getNewsTime()%></td>
+		<td><%=newsVO.getNewsTitle()%></td>
+		<td><%=newsVO.getNewsCon()%></td>
 <%-- 		<td><%=empVO.getSal()%></td> --%>
 <%-- 		<td><%=empVO.getComm()%></td> --%>
 <%-- 		<td><%=empVO.getDeptno()%></td> --%>

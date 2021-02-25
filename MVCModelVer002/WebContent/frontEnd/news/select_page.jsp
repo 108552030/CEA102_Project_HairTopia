@@ -52,9 +52,9 @@
   
   
   <li>
-    <FORM METHOD="post" ACTION="NewsServlet" >
+    <FORM METHOD="post" ACTION="<%=request.getContextPath()%>/news/news.do" >
         <b>輸入消息編號 (如1,2...):</b>
-        <input type="text" name="newsno">
+        <input type="text" name="newsNo">
         <input type="hidden" name="action" value="getOne_For_Display">
         <input type="submit" value="送出">
     </FORM>
@@ -63,9 +63,9 @@
   <jsp:useBean id="newsSvc" scope="page" class="com.news.model.NewsService" />
    
   <li>
-     <FORM METHOD="post" ACTION="NewsServlet" >
-       <b>選擇員工編號:</b>
-       <select size="1" name="newsno">
+     <FORM METHOD="post" ACTION="<%=request.getContextPath()%>/news/news.do" >
+       <b>選擇新聞編號:</b>
+       <select size="1" name="newsNo">
          <c:forEach var="newsVO" items="${newsSvc.all}" > 
           <option value="${newsVO.newsNo}">${newsVO.newsNo}
          </c:forEach>   
@@ -76,9 +76,9 @@
   </li>
   
   <li>
-     <FORM METHOD="post" ACTION="NewsServlet" >
-       <b>選擇員工姓名:</b>
-       <select size="1" name="empno">
+     <FORM METHOD="post" ACTION="<%=request.getContextPath()%>/news/news.do" >
+       <b>選擇新聞標題:</b>
+       <select size="1" name="newsNo">
          <c:forEach var="newsVO" items="${newsSvc.all}" > 
           <option value="${newsVO.newsNo}">${newsVO.newsTitle}
          </c:forEach>   
@@ -93,7 +93,7 @@
 <h3>員工管理</h3>
 
 <ul>
-  <li><a href='addEmp.jsp'>Add</a> a new Emp.</li>
+  <li><a href='<%=request.getContextPath()%>/frontEnd/news/addNews.jsp'>Add</a> a new Emp.</li>
 </ul>
 
 </body>

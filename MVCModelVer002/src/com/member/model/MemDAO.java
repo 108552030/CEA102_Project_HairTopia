@@ -26,12 +26,15 @@ public class MemDAO implements MemDAO_interface{
 	}
 	
 	//memNo,memName,memGender,memPic,memInform,memEmail,memPswd,memPhone,memAddr,memBal,memStatus,memEndDate, memCode
-	private static final String INSERT_STMT = "INSERT INTO MEMBER (memName, memEmail, memPswd) VALUES (?, ?, ?)";
+	private static final String INSERT_SIGNUP_STMT = "INSERT INTO MEMBER (memName, memEmail, memPswd) VALUES (?, ?, ?)";
 	private static final String GET_ALL_STMT = "SELECT * FROM MEMBER";
-	private static final String GET_ONE_STMT = "SELECT memNO, memName, memEmail, memPswd FROM MEMBER WHERE memNO = ?";
+	private static final String GET_ONE_STMT = "SELECT * FROM MEMBER WHERE memNO = ?";
 	private static final String VALIDATE_STMT = "SELECT * FROM MEMBER WHERE memEmail=? AND memPswd=?";
+	private static final String CONFIRM_EMAIL = "SELECT * FROM MEMBER WHERE memEmail=? ";
 	private static final String DELETE = "DELETE FROM MEMBER WHERE memNO = ?";
 	private static final String UPDATE = "UPDATE MEMBER set memName=?, memEmail=?, memPswd= ? WHERE memNO = ?";
+	private static final String UPDATE_PASSWORD_BY_EMAIL = "UPDATE MEMBER set memPswd= ? WHERE memEmail = ?";
+	private static final String UPDATE_NOPIC_STMT = "INSERT INTO MEMBER (memName, memGender , memInform ,memEmail, memPswd, memPhone, memAddr) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
 
 	@Override
@@ -40,8 +43,7 @@ public class MemDAO implements MemDAO_interface{
 		PreparedStatement pstmt = null;
 		try {
 			con = ds.getConnection();
-			pstmt = con.prepareStatement(INSERT_STMT);
-			
+			pstmt = con.prepareStatement(INSERT_SIGNUP_STMT);
 			pstmt.setString(1, memVO.getMemName());
 			pstmt.setString(2, memVO.getMemEmail());
 			pstmt.setString(3, memVO.getMemPswd());
@@ -70,7 +72,6 @@ public class MemDAO implements MemDAO_interface{
 
 	@Override
 	public void update(MemVO memVO) {
-		// TODO Auto-generated method stub
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		try {
@@ -82,9 +83,8 @@ public class MemDAO implements MemDAO_interface{
 			pstmt.setString(3, memVO.getMemPswd());
 			pstmt.setInt(4, memVO.getMemNo());
 
-			int a = pstmt.executeUpdate();
-			System.out.println(a);
-
+			pstmt.executeUpdate();
+		
 		} catch (SQLException se) {
 			throw new RuntimeException("A database error occured. " + se.getMessage());
 		} finally {
@@ -106,6 +106,41 @@ public class MemDAO implements MemDAO_interface{
 
 	}
 
+	@Override
+	public void updatePassword(String memEmail, String memPswd) {
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		try {
+			con = ds.getConnection();
+			pstmt = con.prepareStatement(UPDATE_PASSWORD_BY_EMAIL);
+
+			pstmt.setString(1, memPswd);
+			pstmt.setString(2, memEmail);
+			
+
+			int a = pstmt.executeUpdate();
+
+		} catch (SQLException se) {
+			throw new RuntimeException("A database error occured. " + se.getMessage());
+		} finally {
+			if (pstmt != null) {
+				try {
+					pstmt.close();
+				} catch (SQLException se) {
+					se.printStackTrace(System.err);
+				}
+			}
+			if (con != null) {
+				try {
+					con.close();
+				} catch (Exception e) {
+					e.printStackTrace(System.err);
+				}
+			}
+		}
+		
+	}
+	
 	@Override
 	public void delete(Integer memNo) {
 		// TODO Auto-generated method stub
@@ -159,12 +194,20 @@ public class MemDAO implements MemDAO_interface{
 			rs = pstmt.executeQuery();
 
 			while (rs.next()) {
-				// deptVO 也稱為 Domain objects
 				memVO = new MemVO();
-				memVO.setMemNo(memNo);
+				memVO.setMemNo(rs.getInt("memNo"));
 				memVO.setMemName(rs.getString("memName"));
+				memVO.setMemGender(rs.getInt("memGender"));
+				memVO.setMemPic(rs.getBytes("memPic"));
+				memVO.setMemInform(rs.getString("memInform"));
 				memVO.setMemEmail(rs.getString("memEmail"));
 				memVO.setMemPswd(rs.getString("memPswd"));
+				memVO.setMemPhone(rs.getString("memPhone"));
+				memVO.setMemAddr(rs.getString("memAddr"));
+				memVO.setMemBal(rs.getInt("memBal"));
+				memVO.setMemStatus(rs.getInt("memStatus"));
+				memVO.setMemEndDate(rs.getDate("memEndDate"));
+				memVO.setMemCode(rs.getString("memCode"));
 			}
 
 			// Handle any driver errors
@@ -212,12 +255,21 @@ public class MemDAO implements MemDAO_interface{
 			rs = pstmt.executeQuery();
 
 			while (rs.next()) {
-				// deptVO 也稱為 Domain objects
 				memVO = new MemVO();
 				memVO.setMemNo(rs.getInt("memNo"));
 				memVO.setMemName(rs.getString("memName"));
+				memVO.setMemGender(rs.getInt("memGender"));
+				memVO.setMemPic(rs.getBytes("memPic"));
+				memVO.setMemInform(rs.getString("memInform"));
 				memVO.setMemEmail(rs.getString("memEmail"));
 				memVO.setMemPswd(rs.getString("memPswd"));
+				memVO.setMemPhone(rs.getString("memPhone"));
+				memVO.setMemAddr(rs.getString("memAddr"));
+				memVO.setMemBal(rs.getInt("memBal"));
+				memVO.setMemStatus(rs.getInt("memStatus"));
+				memVO.setMemEndDate(rs.getDate("memEndDate"));
+				memVO.setMemCode(rs.getString("memCode"));
+				
 				list.add(memVO);
 			}
 
@@ -252,9 +304,8 @@ public class MemDAO implements MemDAO_interface{
 	}
 	
 	
-	public boolean validate(MemVO memVO) {
-		boolean status=false;
-		
+	public MemVO validate(String memEmail, String memPswd) {
+		MemVO memVO = null;
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
@@ -263,12 +314,27 @@ public class MemDAO implements MemDAO_interface{
 			con = ds.getConnection();
 			pstmt = con.prepareStatement(VALIDATE_STMT);
 			
-			pstmt.setString(1, memVO.getMemEmail());
-			pstmt.setString(2, memVO.getMemPswd());
+			pstmt.setString(1, memEmail);
+			pstmt.setString(2, memPswd);
 
 			rs = pstmt.executeQuery();
 			
-			status=rs.next();
+			while(rs.next()) {
+				memVO = new MemVO();
+				memVO.setMemNo(rs.getInt("memNo"));
+				memVO.setMemName(rs.getString("memName"));
+				memVO.setMemGender(rs.getInt("memGender"));
+				memVO.setMemPic(rs.getBytes("memPic"));
+				memVO.setMemInform(rs.getString("memInform"));
+				memVO.setMemEmail(rs.getString("memEmail"));
+				memVO.setMemPswd(rs.getString("memPswd"));
+				memVO.setMemPhone(rs.getString("memPhone"));
+				memVO.setMemAddr(rs.getString("memAddr"));
+				memVO.setMemBal(rs.getInt("memBal"));
+				memVO.setMemStatus(rs.getInt("memStatus"));
+				memVO.setMemEndDate(rs.getDate("memEndDate"));
+				memVO.setMemCode(rs.getString("memCode"));
+			}
 			
 			// Handle any driver errors
 		} catch (SQLException se) {
@@ -297,8 +363,59 @@ public class MemDAO implements MemDAO_interface{
 				}
 			}
 		}
-		return status;
+		return memVO;
 	}
+
+	@Override
+	public String validateEmail(String memEmail) {
+		String memName = null;
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+
+		try {
+			con = ds.getConnection();
+			pstmt = con.prepareStatement(CONFIRM_EMAIL);
+			
+			pstmt.setString(1, memEmail);
+
+			rs = pstmt.executeQuery();
+			
+			if(rs.next()) {
+				memName = rs.getString("memName");
+			}
+			
+			// Handle any driver errors
+		} catch (SQLException se) {
+			throw new RuntimeException("A database error occured. " + se.getMessage());
+			// Clean up JDBC resources
+		} finally {
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException se) {
+					se.printStackTrace(System.err);
+				}
+			}
+			if (pstmt != null) {
+				try {
+					pstmt.close();
+				} catch (SQLException se) {
+					se.printStackTrace(System.err);
+				}
+			}
+			if (con != null) {
+				try {
+					con.close();
+				} catch (Exception e) {
+					e.printStackTrace(System.err);
+				}
+			}
+		}
+		return memName;
+	}
+
+
 
 
 }

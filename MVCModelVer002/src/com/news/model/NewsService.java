@@ -20,13 +20,12 @@ public class NewsService {
 		return newsVO;
 	}
 	
-	public NewsVO updateNews(Integer newsNo, String newsTitle, String newsCon, byte[] newsPic) {
+	public NewsVO updateNews(Integer newsNo, String newsTitle, String newsCon) {
 		
 		NewsVO newsVO = new NewsVO();
 		newsVO.setNewsNo(newsNo);
 		newsVO.setNewsTitle(newsTitle);
 		newsVO.setNewsCon(newsCon);
-		newsVO.setNewsPic(newsPic);
 		
 		dao.update(newsVO);
 		

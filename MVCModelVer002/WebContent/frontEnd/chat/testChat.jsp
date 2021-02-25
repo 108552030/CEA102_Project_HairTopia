@@ -77,7 +77,7 @@ th, td {
 				</td>
 				<td>
 <%-- 					${chatVO.chatIsRead} --%>
-				<%=(chatVO.getChatIsRead() == 0) ? "未讀" : "已讀"%>
+				<%=(chatVO.getChatIsRead() == true) ? "已讀" : "未讀"%>
 				</td>
 			</tr>
 		</c:forEach>

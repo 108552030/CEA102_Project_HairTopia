@@ -1,16 +1,17 @@
-<%@ page contentType="text/html; charset=UTF-8" pageEncoding="Big5"%>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ page import="com.news.model.*"%>
+<%@ page import="com.member.model.*"%>
 
 <%
-  NewsVO newsVO = (NewsVO) request.getAttribute("newsVo"); //EmpServlet.java (Concroller) ¦s¤JreqªºempVOª«¥ó (¥]¬AÀ°¦£¨ú¥XªºempVO, ¤]¥]¬A¿é¤J¸ê®Æ¿ù»~®ÉªºempVOª«¥ó)
+  NewsVO newsVO = (NewsVO) request.getAttribute("newsVO"); //EmpServlet.java (Concroller) å­˜å…¥reqçš„empVOç‰©ä»¶ (åŒ…æ‹¬å¹«å¿™å–å‡ºçš„empVO, ä¹ŸåŒ…æ‹¬è¼¸å…¥è³‡æ–™éŒ¯èª¤æ™‚çš„empVOç‰©ä»¶)
 %>
-<%= newsVO==null%> -- ${newsVO== ull}<br>${empVO.deptno}
+<%-- <%= newsVO==null%> -- ${newsVO== ull}<br>${empVO.deptno} --%>
 
 <html>
 <head>
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
-<title>­û¤u¸ê®Æ­×§ï - update_emp_input.jsp</title>
+<title>å“¡å·¥è³‡æ–™ä¿®æ”¹ - update_emp_input.jsp</title>
 
 <style>
   table#table-1 {
@@ -49,16 +50,16 @@
 
 <table id="table-1">
 	<tr><td>
-		 <h3>­û¤u¸ê®Æ­×§ï - update_emp_input.jsp</h3>
-		 <h4><a href="select_page.jsp"><img src="images/back1.gif" width="100" height="32" border="0">¦^­º­¶</a></h4>
+		 <h3>å“¡å·¥è³‡æ–™ä¿®æ”¹ - update_emp_input.jsp</h3>
+		 <h4><a href="<%=request.getContextPath()%>/frontEnd/news/select_page.jsp"><img src="<%=request.getContextPath()%>/resource/images/back1.gif" width="100" height="32" border="0">å›é¦–é </a></h4>
 	</td></tr>
 </table>
 
-<h3>¸ê®Æ­×§ï:</h3>
+<h3>è³‡æ–™ä¿®æ”¹:</h3>
 
-<%-- ¿ù»~ªí¦C --%>
+<%-- éŒ¯èª¤è¡¨åˆ— --%>
 <c:if test="${not empty errorMsgs}">
-	<font style="color:red">½Ğ­×¥¿¥H¤U¿ù»~:</font>
+	<font style="color:red">è«‹ä¿®æ­£ä»¥ä¸‹éŒ¯èª¤:</font>
 	<ul>
 		<c:forEach var="message" items="${errorMsgs}">
 			<li style="color:red">${message}</li>
@@ -66,53 +67,55 @@
 	</ul>
 </c:if>
 
-<FORM METHOD="post" ACTION="emp.do" name="form1">
-<table>
-<!-- 	<tr> -->
-<!-- 		<td>­û¤u½s¸¹:<font color=red><b>*</b></font></td> -->
-<%-- 		<td><%=empVO.getEmpno()%></td> --%>
-<!-- 	</tr> -->
-<!-- 	<tr> -->
-<!-- 		<td>­û¤u©m¦W:</td> -->
-<%-- 		<td><input type="TEXT" name="ename" size="45" value="<%=empVO.getEname()%>" /></td> --%>
-<!-- 	</tr> -->
-<!-- 	<tr> -->
-<!-- 		<td>Â¾¦ì:</td> -->
-<%-- 		<td><input type="TEXT" name="job" size="45"	value="<%=empVO.getJob()%>" /></td> --%>
-<!-- 	</tr> -->
-<!-- 	<tr> -->
-<!-- 		<td>¶±¥Î¤é´Á:</td> -->
-<!-- 		<td><input name="hiredate" id="f_date1" type="text" ></td> -->
-<!-- 	</tr> -->
-<!-- 	<tr> -->
-<!-- 		<td>Á~¤ô:</td> -->
-<%-- 		<td><input type="TEXT" name="sal" size="45"	value="<%=empVO.getSal()%>" /></td> --%>
-<!-- 	</tr> -->
-<!-- 	<tr> -->
-<!-- 		<td>¼úª÷:</td> -->
-<%-- 		<td><input type="TEXT" name="comm" size="45" value="<%=empVO.getComm()%>" /></td> --%>
-<!-- 	</tr> -->
+	<FORM METHOD="post" ACTION="<%=request.getContextPath()%>/news/news.do"
+		name="form1">
+		<table>
+			<tr>
+				<td>æ¶ˆæ¯ç·¨è™Ÿ:<font color=red><b>*</b></font></td>
+				<td><%=newsVO.getNewsNo() %></td>
+			</tr>
+			<tr>
+				<td>æ¶ˆæ¯æ¨™é¡Œ:</td>
+				<td><input type="TEXT" name="newsTitle" size="50"
+					value="<%=newsVO.getNewsTitle()%>" /></td>
+			</tr>
+			<tr>
+				<td>æ¶ˆæ¯å…§å®¹:</td>
+				<td><input type="TEXT" name="newsCon" size="50"
+					value="<%=newsVO.getNewsCon()%>" /></td>
+			</tr>
+<!-- 			<tr> -->
+<!-- 				<td>æ¶ˆæ¯æ™‚é–“:</td> -->
+<!-- 				<td><input type="datetime-local" name="newsTime" id="f_date1" type="text"  -->
+<%-- 				value="<%=newsVO.getNewsTime()%>"></td> --%>
+<!-- 			</tr> -->
 
-<%-- 	<jsp:useBean id="deptSvc" scope="page" class="com.dept.model.DeptService" /> --%>
-<!-- 	<tr> -->
-<!-- 		<td>³¡ªù:<font color=red><b>*</b></font></td> -->
-<!-- 		<td><select size="1" name="deptno"> -->
-<%-- 			<c:forEach var="deptVO" items="${deptSvc.all}"> --%>
-<%-- 				<option value="${deptVO.deptno}" ${(empVO.deptno==deptVO.deptno)?'selected':'' } >${deptVO.dname} --%>
-<%-- 			</c:forEach> --%>
-<!-- 		</select></td> -->
-<!-- 	</tr> -->
 
-<!-- </table> -->
-<!-- <br> -->
-<!-- <input type="hidden" name="action" value="update"> -->
-<%-- <input type="hidden" name="empno" value="<%=empVO.getEmpno()%>"> --%>
-<!-- <input type="submit" value="°e¥X­×§ï"></FORM> -->
+<%-- 			<jsp:useBean id="memSvc" scope="page" --%>
+<%-- 				class="com.member.model.MemService" /> --%>
+<!-- 			<tr> -->
+<!-- 				<td>éƒ¨é–€:<font color=red><b>*</b></font></td> -->
+<!-- 				<td><select size="1" name="deptno"> -->
+<%-- 						<c:forEach var="deptVO" items="${deptSvc.all}"> --%>
+<%-- 							<option value="${deptVO.deptno}" --%>
+<%-- 								${(empVO.deptno==deptVO.deptno)?'selected':'' }>${deptVO.dname} --%>
+<%-- 						</c:forEach> --%>
+<!-- 				</select></td> -->
+<!-- 			</tr> -->
+
+		</table>
+		<br> 
+			<input type="hidden" name="action" value="update"> 
+			<input type="hidden" name="newsNo" value="<%=newsVO.getNewsNo()%>"> 
+			<input type="hidden" name="requestURL" value="<%=request.getParameter("requestURL")%>"> <!--æ¥æ”¶åŸé€å‡ºä¿®æ”¹çš„ä¾†æºç¶²é è·¯å¾‘å¾Œ,å†é€çµ¦Controlleræº–å‚™è½‰äº¤ä¹‹ç”¨-->
+			<input type="hidden" name="whichPage"  value="<%=request.getParameter("whichPage")%>">  <!--åªç”¨æ–¼:istAllEmp.jsp-->
+			<input type="submit" value="é€å‡ºä¿®æ”¹">
+	</FORM>
 </body>
 
 
 
-<!-- =========================================¥H¤U¬° datetimepicker ¤§¬ÛÃö³]©w========================================== -->
+<!-- =========================================ä»¥ä¸‹ç‚º datetimepicker ä¹‹ç›¸é—œè¨­å®š========================================== -->
 
 <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/datetimepicker/jquery.datetimepicker.css" />
 <script src="<%=request.getContextPath()%>/datetimepicker/jquery.js"></script>
@@ -132,20 +135,20 @@
         $('#f_date1').datetimepicker({
            theme: '',              //theme: 'dark',
  	       timepicker:false,       //timepicker:true,
- 	       step: 1,                //step: 60 (³o¬Otimepickerªº¹w³]¶¡¹j60¤ÀÄÁ)
+ 	       step: 1,                //step: 60 (é€™æ˜¯timepickerçš„é è¨­é–“éš”60åˆ†é˜)
  	       format:'Y-m-d',         //format:'Y-m-d H:i:s',
  		   value: '<%=newsVO.getNewsTime()%>', // value:   new Date(),
-           //disabledDates:        ['2017/06/08','2017/06/09','2017/06/10'], // ¥h°£¯S©w¤£§t
-           //startDate:	            '2017/07/10',  // °_©l¤é
-           //minDate:               '-1970-01-01', // ¥h°£¤µ¤é(¤£§t)¤§«e
-           //maxDate:               '+1970-01-01'  // ¥h°£¤µ¤é(¤£§t)¤§«á
+           //disabledDates:        ['2017/06/08','2017/06/09','2017/06/10'], // å»é™¤ç‰¹å®šä¸å«
+           //startDate:	            '2017/07/10',  // èµ·å§‹æ—¥
+           //minDate:               '-1970-01-01', // å»é™¤ä»Šæ—¥(ä¸å«)ä¹‹å‰
+           //maxDate:               '+1970-01-01'  // å»é™¤ä»Šæ—¥(ä¸å«)ä¹‹å¾Œ
         });
         
         
    
-        // ----------------------------------------------------------¥H¤U¥Î¨Ó±Æ©wµLªk¿ï¾Üªº¤é´Á-----------------------------------------------------------
+        // ----------------------------------------------------------ä»¥ä¸‹ç”¨ä¾†æ’å®šç„¡æ³•é¸æ“‡çš„æ—¥æœŸ-----------------------------------------------------------
 
-        //      1.¥H¤U¬°¬Y¤@¤Ñ¤§«eªº¤é´ÁµLªk¿ï¾Ü
+        //      1.ä»¥ä¸‹ç‚ºæŸä¸€å¤©ä¹‹å‰çš„æ—¥æœŸç„¡æ³•é¸æ“‡
         //      var somedate1 = new Date('2017-06-15');
         //      $('#f_date1').datetimepicker({
         //          beforeShowDay: function(date) {
@@ -159,7 +162,7 @@
         //      }});
 
         
-        //      2.¥H¤U¬°¬Y¤@¤Ñ¤§«áªº¤é´ÁµLªk¿ï¾Ü
+        //      2.ä»¥ä¸‹ç‚ºæŸä¸€å¤©ä¹‹å¾Œçš„æ—¥æœŸç„¡æ³•é¸æ“‡
         //      var somedate2 = new Date('2017-06-15');
         //      $('#f_date1').datetimepicker({
         //          beforeShowDay: function(date) {
@@ -173,7 +176,7 @@
         //      }});
 
 
-        //      3.¥H¤U¬°¨â­Ó¤é´Á¤§¥~ªº¤é´ÁµLªk¿ï¾Ü (¤]¥i«ö»İ­n´«¦¨¨ä¥L¤é´Á)
+        //      3.ä»¥ä¸‹ç‚ºå…©å€‹æ—¥æœŸä¹‹å¤–çš„æ—¥æœŸç„¡æ³•é¸æ“‡ (ä¹Ÿå¯æŒ‰éœ€è¦æ›æˆå…¶ä»–æ—¥æœŸ)
         //      var somedate1 = new Date('2017-06-15');
         //      var somedate2 = new Date('2017-06-25');
         //      $('#f_date1').datetimepicker({

@@ -6,12 +6,13 @@
   NewsVO newsVO = (NewsVO) request.getAttribute("NewsVO");
 %>
 
-<%= newsVO==null%> -- ${newsVO==null}<br>${newsVO.newsNo}<!-- 100 -->
+<%-- <%= newsVO==null%> -- ${newsVO==null}<br>${newsVO.newsNo}<!-- 100 --> --%>
 
 <html>
 <head>
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
 <title>員工資料新增 - addEmp.jsp</title>
+<script src="\MVCModelVer002\resource\build\ckeditor.js"></script>
 
 <style>
   table#table-1 {
@@ -50,8 +51,9 @@
 
 <table id="table-1">
 	<tr><td>
-		 <h3>員工資料新增 - addNews.jsp</h3></td><td>
-		 <h4><a href="select_page.jsp"><img src="images/tomcat.png" width="100" height="100" border="0">回首頁</a></h4>
+		 <h3>新聞資料新增 - addNews.jsp</h3></td><td>
+		 <h4><a href="<%=request.getContextPath()%>/frontEnd/news/select_page.jsp">
+		 <img src="<%=request.getContextPath()%>/resource/images/tomcat.png" width="100" height="100" border="0">回首頁</a></h4>
 	</td></tr>
 </table>
 
@@ -67,24 +69,24 @@
 	</ul>
 </c:if>
 
-<FORM METHOD="post" ACTION="emp.do" name="form1">
+<FORM METHOD="post" ACTION="<%=request.getContextPath()%>/news/news.do" name="form1">
 <table>
 
 	<tr>
 		<td>新聞標題:</td>
-		<td><input type="TEXT" name="ename" size="45" 
+		<td><input type="TEXT" name="newsTitle" size="50" 
 			 value="<%= (newsVO==null)? "標題想一想" : newsVO.getNewsTitle()%>" /></td>
 	</tr>
 	<tr>
 		<td>新聞內容:</td>
-		<td><input type="TEXT" name="job" size="45"
+		<td><input type="" name="newsCon" size="50"
 			 value="<%= (newsVO==null)? "MANAGER" : newsVO.getNewsCon() %>" /></td>
 	</tr>
 
-	<tr>
-		<td>新聞日期:</td>
-		<td><input name="newsDate" id="f_date1" type="text"></td>
-	</tr>
+<!-- 	<tr> -->
+<!-- 		<td>新聞日期:</td> -->
+<!-- 		<td><input name="newsDate" id="f_date1" type="text"></td> -->
+<!-- 	</tr> -->
 <%-- 	<jsp:useBean id="deptSvc" scope="page" class="com.dept.model.DeptService" /> --%>
 <!-- 	<tr> -->
 <!-- 		<td>部門:<font color=red><b>*</b></font></td> -->
@@ -100,8 +102,44 @@
 <input type="hidden" name="action" value="insert">
 <input type="submit" value="送出新增"></FORM>
 
-<%! int count = 0;%>
-<%=++count %>
+<!-- <div id="editor">This is some sample content.</div> -->
+
+<script>
+
+
+        // ClassicEditor
+        //     .create(document.querySelector('#editor'))
+        //     .catch(error => {
+        //         console.error(error);
+        //     });
+        ClassicEditor
+            .create(document.querySelector(
+                '#editor'), {
+                //plugins: ['Base64UploadAdapter'],
+                toolbar: ['heading', '|',
+                    'alignment', '|',
+                    'bold', 'italic', 'strikethrough', 'underline', 'subscript', 'superscript', '|',
+                    'link', '|',
+                    'bulletedList', 'numberedList', 'todoList',
+                    '-', // break point
+                    'fontfamily', 'fontsize', 'fontColor', 'fontBackgroundColor', '|',
+                    'code', 'codeBlock', '|',
+                    'insertTable', '|',
+                    'outdent', 'indent', '|',
+                    'imageUpload', 'blockQuote', '|',
+                    'undo', 'redo'],
+                indentBlock: {
+                    offset: 1,
+                    unit: 'em'
+                }
+            })
+            .then(editor => {
+                console.log(editor);
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    </script>
 </body>
 
 

@@ -44,13 +44,16 @@ public class MemService {
 		return dao.getAll();
 	}
 	
-	public boolean validate(String memEmail, String memPswd){
-
-		MemVO memVO = new MemVO();	
-		memVO.setMemEmail(memEmail);
-		memVO.setMemPswd(memPswd);
-		
-		return dao.validate(memVO);
+	public MemVO validate(String memEmail, String memPswd){
+		return dao.validate(memEmail, memPswd);
+	}
+	
+	public String validateEmail(String memEmail) {
+		return dao.validateEmail(memEmail);
+	}
+	
+	public void updatePassword(String memEmail, String memPswd) {
+		dao.updatePassword(memEmail, memPswd);
 	}
 	
 }
