@@ -9,12 +9,13 @@ public class NotiService {
 		dao = new NotiDAO();
 	}
 	
-	public NotiVO addNoti(Integer memNo, String notiText) {
+	public NotiVO addNoti(Integer memNo, String notiText, Boolean notiIsRead) {
 		
 		NotiVO notiVO = new NotiVO();
 		
 		notiVO.setMemNo(memNo);
 		notiVO.setNotiText(notiText);
+		notiVO.setNotiIsRead(notiIsRead);
 		
 		dao.insert(notiVO);
 		

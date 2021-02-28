@@ -38,6 +38,7 @@
 		<servlet-name>MemServlet</servlet-name>
 		<url-pattern>/member/mem.do</url-pattern>
 	</servlet-mapping>
+
 	<servlet>
 		<servlet-name>NewsServlet</servlet-name>
 		<servlet-class>com.news.controller.NewsServlet</servlet-class>
@@ -45,6 +46,51 @@
 	<servlet-mapping>
 		<servlet-name>NewsServlet</servlet-name>
 		<url-pattern>/news/news.do</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>ChatServlet</servlet-name>
+		<servlet-class>com.chat.controller.ChatServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ChatServlet</servlet-name>
+		<url-pattern>/chat/chat.do</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>RuleServlet</servlet-name>
+		<servlet-class>com.rule.controller.RuleServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>RuleServlet</servlet-name>
+		<url-pattern>/rule/rule.do</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>NotiServlet</servlet-name>
+		<servlet-class>com.notification.controller.NotiServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>NotiServlet</servlet-name>
+		<url-pattern>/noti/noti.do</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>TransRecServlet</servlet-name>
+		<servlet-class>com.transactionRecord.controller.TransRecServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>TransRecServlet</servlet-name>
+		<url-pattern>/transRec/transRec.do</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>ShowImage</servlet-name>
+		<servlet-class>com.util.imageHandle.ShowImage</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ShowImage</servlet-name>
+		<url-pattern>/showImges.do</url-pattern>
 	</servlet-mapping>
 
 	<filter>

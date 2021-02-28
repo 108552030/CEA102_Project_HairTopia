@@ -20,7 +20,7 @@ public class RuleService {
 		return ruleVO;
 	}
 
-	public RuleVO updateNews(Integer ruleNo, String ruleName, String ruleCon) {
+	public RuleVO updateRule(Integer ruleNo, String ruleName, String ruleCon) {
 
 		RuleVO ruleVO = new RuleVO();
 		ruleVO.setRuleNo(ruleNo);
@@ -36,7 +36,7 @@ public class RuleService {
 		dao.delete(ruleNo);
 	}
 	
-	public RuleVO getOneMem(Integer ruleNo) {
+	public RuleVO getOneRule(Integer ruleNo) {
 		return dao.findByPrimaryKey(ruleNo);
 	}
 	

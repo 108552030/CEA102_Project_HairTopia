@@ -19,12 +19,12 @@ public class ChatDAO implements ChatDAO_interface{
 		}
 	}
 	
-	private static final String INSERT_TEXT_STMT = "INSERT INTO CHAT (chatSender, chatReceiver, chatText) VALUES (?, ?, ?)";
-	private static final String INSERT_PIC_STMT = "INSERT INTO CHAT (chatSender, chatReceiver, chatPic) VALUES (?, ?, ?)";
+	private static final String INSERT_TEXT_STMT = "INSERT INTO CHAT (chatSender, chatReceiver, chatText, chatPic) VALUES (?, ?, ?, ?)";
 	private static final String GET_ALL_STMT = "SELECT * FROM CHAT";
 	private static final String GET_ONE_STMT = "SELECT * FROM CHAT WHERE chatNo = ?";
 	private static final String DELETE = "DELETE FROM CHAT WHERE chatNo = ?";
 	private static final String UPDATE = "UPDATE CHAT set chatSender=?, chatReceiver=?, chatText= ? WHERE chatNo = ?";
+	private static final String UPDATE_WITH_PIC = "UPDATE CHAT set chatSender=?, chatReceiver=?, chatText=?, chatPic=? WHERE chatNo = ?";
 	
 	@Override
 	public void insert(ChatVO chatVO) {
@@ -38,6 +38,7 @@ public class ChatDAO implements ChatDAO_interface{
 			pstmt.setInt(1, chatVO.getChatSender());
 			pstmt.setInt(2, chatVO.getChatReceiver());
 			pstmt.setString(3, chatVO.getChatText());
+			pstmt.setBytes(4, chatVO.getChatPic());
 
 			pstmt.execute();
 
@@ -67,12 +68,20 @@ public class ChatDAO implements ChatDAO_interface{
 		PreparedStatement pstmt = null;
 		try {
 			con = ds.getConnection();
-			pstmt = con.prepareStatement(UPDATE);
+			if(chatVO.getChatPic() == null) {
+				pstmt = con.prepareStatement(UPDATE);
+				pstmt.setInt(4, chatVO.getChatNo());
+			}else {
+				pstmt = con.prepareStatement(UPDATE_WITH_PIC);
+				pstmt.setBytes(4, chatVO.getChatPic());
+				pstmt.setInt(5, chatVO.getChatNo());
+			}
+			
 
 			pstmt.setInt(1, chatVO.getChatSender());
 			pstmt.setInt(2, chatVO.getChatReceiver());
 			pstmt.setString(3, chatVO.getChatText());
-			pstmt.setInt(4, chatVO.getChatNo());
+			
 
 			pstmt.executeUpdate();
 

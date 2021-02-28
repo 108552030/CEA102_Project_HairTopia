@@ -9,36 +9,38 @@ public class ChatService {
 		dao = new ChatDAO();
 	}
 	
-	public ChatVO addChat(Integer chatSender, Integer chatReceiver, String chatText) {
+	public ChatVO addChat(Integer chatSender, Integer chatReceiver, String chatText, byte[] chatPic) {
 		ChatVO chatVO = new ChatVO();
 		
 		chatVO.setChatSender(chatSender);
 		chatVO.setChatReceiver(chatReceiver);
 		chatVO.setChatText(chatText);
+		chatVO.setChatPic(chatPic);
 		
 		dao.insert(chatVO);
 		
 		return chatVO;
 	}
 	
-	public ChatVO updateMember(Integer chatNo, Integer chatSender, Integer chatReceiver, String chatText) {
+	public ChatVO updateChat(Integer chatNo, Integer chatSender, Integer chatReceiver, String chatText, byte[] chatPic) {
 		
 		ChatVO chatVO = new ChatVO();
 		chatVO.setChatNo(chatNo);
 		chatVO.setChatSender(chatSender);
 		chatVO.setChatReceiver(chatReceiver);
 		chatVO.setChatText(chatText);
+		chatVO.setChatPic(chatPic);
 		
 		dao.update(chatVO);
 		
 		return chatVO;
 	}
 	
-	public void deleteMember(Integer chatNo) {
+	public void deleteChat(Integer chatNo) {
 		dao.delete(chatNo);
 	}
 	
-	public ChatVO getOneMem(Integer chatNo) {
+	public ChatVO getOneChat(Integer chatNo) {
 		return dao.findByPrimaryKey(chatNo);
 	}
 	

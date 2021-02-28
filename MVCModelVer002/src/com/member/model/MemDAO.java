@@ -1,5 +1,6 @@
 package com.member.model;
 
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -27,18 +28,59 @@ public class MemDAO implements MemDAO_interface{
 	
 	//memNo,memName,memGender,memPic,memInform,memEmail,memPswd,memPhone,memAddr,memBal,memStatus,memEndDate, memCode
 	private static final String INSERT_SIGNUP_STMT = "INSERT INTO MEMBER (memName, memEmail, memPswd) VALUES (?, ?, ?)";
+//	private static final String INSERT_NO_PIC = "INSERT INTO MEMBER (memName, memGender , memInform ,memEmail, memPswd, memPhone, memAddr) VALUES (?, ?, ?, ?, ?, ?, ?)";
+	private static final String INSERT = "INSERT INTO MEMBER (memName, memGender, memInform ,memEmail, memPswd, memPhone, memAddr, memPic) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 	private static final String GET_ALL_STMT = "SELECT * FROM MEMBER";
 	private static final String GET_ONE_STMT = "SELECT * FROM MEMBER WHERE memNO = ?";
 	private static final String VALIDATE_STMT = "SELECT * FROM MEMBER WHERE memEmail=? AND memPswd=?";
 	private static final String CONFIRM_EMAIL = "SELECT * FROM MEMBER WHERE memEmail=? ";
 	private static final String DELETE = "DELETE FROM MEMBER WHERE memNO = ?";
-	private static final String UPDATE = "UPDATE MEMBER set memName=?, memEmail=?, memPswd= ? WHERE memNO = ?";
+	private static final String UPDATE_WITH_PIC = "UPDATE MEMBER set memName=?, memGender=?, memInform=?, memEmail=?, memPswd= ?, memPhone=?, memAddr=?, memPic=? WHERE memNO = ?";
 	private static final String UPDATE_PASSWORD_BY_EMAIL = "UPDATE MEMBER set memPswd= ? WHERE memEmail = ?";
-	private static final String UPDATE_NOPIC_STMT = "INSERT INTO MEMBER (memName, memGender , memInform ,memEmail, memPswd, memPhone, memAddr) VALUES (?, ?, ?, ?, ?, ?, ?)";
-
+	private static final String UPDATE_NOPIC_STMT = "UPDATE MEMBER set memName=?, memGender=?, memInform=?, memEmail=?, memPswd= ?, memPhone=?, memAddr=? WHERE memNO = ?";
+	private static final String GET_IMG = "SELECT memPic FROM MEMBER WHERE memNO = ?";
 
 	@Override
 	public void insert(MemVO memVO) {
+
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		try {
+			
+			con = ds.getConnection();
+			pstmt = con.prepareStatement(INSERT);
+			pstmt.setString(1, memVO.getMemName());
+			pstmt.setInt(2, (memVO.getMemGender() == null) ? 0 : memVO.getMemGender());
+			pstmt.setString(3, memVO.getMemInform());
+			pstmt.setString(4, memVO.getMemEmail());
+			pstmt.setString(5, memVO.getMemPswd());
+			pstmt.setString(6, memVO.getMemPhone());
+			pstmt.setString(7, memVO.getMemAddr());
+			pstmt.setBytes(8, memVO.getMemPic());
+			
+			pstmt.executeUpdate();
+
+		} catch (SQLException se) {
+			throw new RuntimeException("A database error occured. " + se.getMessage());
+		} finally {
+			if (pstmt != null) {
+				try {
+					pstmt.close();
+				} catch (SQLException se) {
+					se.printStackTrace(System.err);
+				}
+			}
+			if (con != null) {
+				try {
+					con.close();
+				} catch (Exception e) {
+					e.printStackTrace(System.err);
+				}
+			}
+		}
+	}
+	
+	public void signUp(MemVO memVO) {
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		try {
@@ -69,19 +111,30 @@ public class MemDAO implements MemDAO_interface{
 			}
 		}
 	}
-
+	
 	@Override
 	public void update(MemVO memVO) {
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		try {
 			con = ds.getConnection();
-			pstmt = con.prepareStatement(UPDATE);
+			if(memVO.getMemPic() == null) {
+				pstmt = con.prepareStatement(UPDATE_NOPIC_STMT);
+				pstmt.setInt(8, memVO.getMemNo());
+			}else {
+				pstmt = con.prepareStatement(UPDATE_WITH_PIC);
+				pstmt.setBytes(8, memVO.getMemPic());
+				pstmt.setInt(9, memVO.getMemNo());
+			}
+			
 			
 			pstmt.setString(1, memVO.getMemName());
-			pstmt.setString(2, memVO.getMemEmail());
-			pstmt.setString(3, memVO.getMemPswd());
-			pstmt.setInt(4, memVO.getMemNo());
+			pstmt.setInt(2, (memVO.getMemGender() == null) ? 0 : memVO.getMemGender());
+			pstmt.setString(3, memVO.getMemInform());
+			pstmt.setString(4, memVO.getMemEmail());
+			pstmt.setString(5, memVO.getMemPswd());
+			pstmt.setString(6, memVO.getMemPhone());
+			pstmt.setString(7, memVO.getMemAddr());
 
 			pstmt.executeUpdate();
 		
@@ -303,7 +356,6 @@ public class MemDAO implements MemDAO_interface{
 		return list;
 	}
 	
-	
 	public MemVO validate(String memEmail, String memPswd) {
 		MemVO memVO = null;
 		Connection con = null;
@@ -415,6 +467,53 @@ public class MemDAO implements MemDAO_interface{
 		return memName;
 	}
 
+//	public InputStream showImg(Integer memNo) {
+//		InputStream memPic= null;
+//		Connection con = null;
+//		PreparedStatement pstmt = null;
+//		ResultSet rs = null;
+//
+//		try {
+//			con = ds.getConnection();
+//			pstmt = con.prepareStatement(GET_IMG);
+//
+//			pstmt.setInt(1, memNo);
+//			rs = pstmt.executeQuery();
+//			if(rs.next()) {
+//				memPic = rs.getBinaryStream("memPic");
+//			}
+//			
+//			
+//
+//			// Handle any driver errors
+//		} catch (SQLException se) {
+//			throw new RuntimeException("A database error occured. " + se.getMessage());
+//			// Clean up JDBC resources
+//		} finally {
+//			if (rs != null) {
+//				try {
+//					rs.close();
+//				} catch (SQLException se) {
+//					se.printStackTrace(System.err);
+//				}
+//			}
+//			if (pstmt != null) {
+//				try {
+//					pstmt.close();
+//				} catch (SQLException se) {
+//					se.printStackTrace(System.err);
+//				}
+//			}
+//			if (con != null) {
+//				try {
+//					con.close();
+//				} catch (Exception e) {
+//					e.printStackTrace(System.err);
+//				}
+//			}
+//		}
+//		return memPic;
+//	}
 
 
 

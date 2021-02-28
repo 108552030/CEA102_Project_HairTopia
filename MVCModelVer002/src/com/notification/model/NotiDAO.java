@@ -21,7 +21,7 @@ private static DataSource ds = null;
 		}
 	}
 	
-	private static final String INSERT_TEXT_STMT = "INSERT INTO NOTIFICATION (memNo, notiText) VALUES (?, ?)";
+	private static final String INSERT_TEXT_STMT = "INSERT INTO NOTIFICATION (memNo, notiText, notiIsRead) VALUES (?, ?, ?)";
 	private static final String GET_ALL_STMT = "SELECT * FROM NOTIFICATION";
 	private static final String GET_ONE_STMT = "SELECT * FROM NOTIFICATION WHERE notiNo = ?";
 	private static final String DELETE = "DELETE FROM NOTIFICATION WHERE notiNo = ?";
@@ -39,6 +39,7 @@ private static DataSource ds = null;
 
 			pstmt.setInt(1, notiVO.getMemNo());
 			pstmt.setString(2, notiVO.getNotiText());
+			pstmt.setBoolean(3, notiVO.getNotiIsRead());
 
 			pstmt.execute();
 
@@ -72,7 +73,7 @@ private static DataSource ds = null;
 
 			pstmt.setInt(1, notiVO.getMemNo());
 			pstmt.setString(2, notiVO.getNotiText());
-			pstmt.setBoolean(3, notiVO.getNotiIsRead());
+			pstmt.setBoolean(3, (notiVO.getNotiIsRead() == null) ? false : notiVO.getNotiIsRead());
 			pstmt.setInt(4, notiVO.getNotiNo());
 
 			pstmt.executeUpdate();

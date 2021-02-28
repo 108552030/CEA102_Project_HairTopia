@@ -13,6 +13,7 @@ public class MemJDBCDAO implements MemDAO_interface {
 	// memCode
 
 	private static final String INSERT_SIGNUP_STMT = "INSERT INTO MEMBER (memName, memEmail, memPswd) VALUES (?, ?, ?)";
+	private static final String INSERT = "INSERT INTO MEMBER (memName, memGender, memInform ,memEmail, memPswd, memPhone, memAddr, memPic) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 	private static final String GET_ALL_STMT = "SELECT * FROM MEMBER";
 	private static final String GET_ONE_STMT = "SELECT * FROM MEMBER WHERE memNO = ?";
 	private static final String VALIDATE_STMT = "SELECT * FROM MEMBER WHERE memEmail=? AND memPswd=?";
@@ -24,6 +25,47 @@ public class MemJDBCDAO implements MemDAO_interface {
 	
 	@Override
 	public void insert(MemVO memVO) {
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		try {
+			Class.forName(driver);
+			con = DriverManager.getConnection(url, userid, passwd);
+			pstmt = con.prepareStatement(INSERT);
+			pstmt.setString(1, memVO.getMemName());
+			pstmt.setInt(2, (memVO.getMemGender() == null) ? 0 : memVO.getMemGender());
+			pstmt.setString(3, memVO.getMemInform());
+			pstmt.setString(4, memVO.getMemEmail());
+			pstmt.setString(5, memVO.getMemPswd());
+			pstmt.setString(6, memVO.getMemPhone());
+			pstmt.setString(7, memVO.getMemAddr());
+			pstmt.setBytes(8, memVO.getMemPic());
+
+			pstmt.executeUpdate();
+
+		} catch (ClassNotFoundException e) {
+			throw new RuntimeException("Couldn't load database driver. " + e.getMessage());
+		} catch (SQLException se) {
+			throw new RuntimeException("A database error occured. " + se.getMessage());
+		} finally {
+			if (pstmt != null) {
+				try {
+					pstmt.close();
+				} catch (SQLException se) {
+					se.printStackTrace(System.err);
+				}
+			}
+			if (con != null) {
+				try {
+					con.close();
+				} catch (Exception e) {
+					e.printStackTrace(System.err);
+				}
+			}
+		}
+	}
+
+	@Override
+	public void signUp(MemVO memVO) {
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		try {
@@ -56,8 +98,9 @@ public class MemJDBCDAO implements MemDAO_interface {
 				}
 			}
 		}
+		
 	}
-
+	
 	@Override
 	public void update(MemVO memVO) {
 		Connection con = null;
@@ -438,13 +481,14 @@ public class MemJDBCDAO implements MemDAO_interface {
 		MemJDBCDAO dao = new MemJDBCDAO();
 
 //		System.out.println(123);
+		
 
 //		 insert test
-//			MemVO memVO1 = new MemVO();
-//			memVO1.setMemName("Sandy");
-//			memVO1.setMemEmail("PRESIDENT14@sss");
-//			memVO1.setMemPswd("123456");
-//			dao.insert(memVO1);
+			MemVO memVO1 = new MemVO();
+			memVO1.setMemName("Sandy");
+			memVO1.setMemEmail("PRESIDENT666@sss");
+			memVO1.setMemPswd("123456");
+			dao.insert(memVO1);
 
 //		 update test
 //			MemVO memVO1 = new MemVO();
@@ -511,6 +555,8 @@ public class MemJDBCDAO implements MemDAO_interface {
 		
 //		dao.updatePassword("PRESIDENT11@sss", "243564");
 	}
+
+
 
 
 
